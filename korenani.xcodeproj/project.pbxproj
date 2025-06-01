@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D09B6E6E2DEB750100841341 /* screen4ai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = screen4ai.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D09B6E7C2DEB750200841341 /* screen4aiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = screen4aiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D09B6E862DEB750200841341 /* screen4aiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = screen4aiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09B6E6E2DEB750100841341 /* korenani.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = korenani.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09B6E7C2DEB750200841341 /* korenaniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09B6E862DEB750200841341 /* korenaniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,9 +85,9 @@
 		D09B6E6F2DEB750100841341 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D09B6E6E2DEB750100841341 /* screen4ai.app */,
-				D09B6E7C2DEB750200841341 /* screen4aiTests.xctest */,
-				D09B6E862DEB750200841341 /* screen4aiUITests.xctest */,
+				D09B6E6E2DEB750100841341 /* korenani.app */,
+				D09B6E7C2DEB750200841341 /* korenaniTests.xctest */,
+				D09B6E862DEB750200841341 /* korenaniUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D09B6E6D2DEB750100841341 /* screen4ai */ = {
+		D09B6E6D2DEB750100841341 /* korenani */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D09B6E902DEB750200841341 /* Build configuration list for PBXNativeTarget "screen4ai" */;
+			buildConfigurationList = D09B6E902DEB750200841341 /* Build configuration list for PBXNativeTarget "korenani" */;
 			buildPhases = (
 				D09B6E6A2DEB750100841341 /* Sources */,
 				D09B6E6B2DEB750100841341 /* Frameworks */,
@@ -110,16 +110,16 @@
 			fileSystemSynchronizedGroups = (
 				D09B6E702DEB750100841341 /* screen4ai */,
 			);
-			name = screen4ai;
+			name = korenani;
 			packageProductDependencies = (
 			);
 			productName = screen4ai;
-			productReference = D09B6E6E2DEB750100841341 /* screen4ai.app */;
+			productReference = D09B6E6E2DEB750100841341 /* korenani.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D09B6E7B2DEB750200841341 /* screen4aiTests */ = {
+		D09B6E7B2DEB750200841341 /* korenaniTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D09B6E932DEB750200841341 /* Build configuration list for PBXNativeTarget "screen4aiTests" */;
+			buildConfigurationList = D09B6E932DEB750200841341 /* Build configuration list for PBXNativeTarget "korenaniTests" */;
 			buildPhases = (
 				D09B6E782DEB750200841341 /* Sources */,
 				D09B6E792DEB750200841341 /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				D09B6E7F2DEB750200841341 /* screen4aiTests */,
 			);
-			name = screen4aiTests;
+			name = korenaniTests;
 			packageProductDependencies = (
 			);
 			productName = screen4aiTests;
-			productReference = D09B6E7C2DEB750200841341 /* screen4aiTests.xctest */;
+			productReference = D09B6E7C2DEB750200841341 /* korenaniTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D09B6E852DEB750200841341 /* screen4aiUITests */ = {
+		D09B6E852DEB750200841341 /* korenaniUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D09B6E962DEB750200841341 /* Build configuration list for PBXNativeTarget "screen4aiUITests" */;
+			buildConfigurationList = D09B6E962DEB750200841341 /* Build configuration list for PBXNativeTarget "korenaniUITests" */;
 			buildPhases = (
 				D09B6E822DEB750200841341 /* Sources */,
 				D09B6E832DEB750200841341 /* Frameworks */,
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				D09B6E892DEB750200841341 /* screen4aiUITests */,
 			);
-			name = screen4aiUITests;
+			name = korenaniUITests;
 			packageProductDependencies = (
 			);
 			productName = screen4aiUITests;
-			productReference = D09B6E862DEB750200841341 /* screen4aiUITests.xctest */;
+			productReference = D09B6E862DEB750200841341 /* korenaniUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D09B6E692DEB750100841341 /* Build configuration list for PBXProject "screen4ai" */;
+			buildConfigurationList = D09B6E692DEB750100841341 /* Build configuration list for PBXProject "korenani" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D09B6E6D2DEB750100841341 /* screen4ai */,
-				D09B6E7B2DEB750200841341 /* screen4aiTests */,
-				D09B6E852DEB750200841341 /* screen4aiUITests */,
+				D09B6E6D2DEB750100841341 /* korenani */,
+				D09B6E7B2DEB750200841341 /* korenaniTests */,
+				D09B6E852DEB750200841341 /* korenaniUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		D09B6E7E2DEB750200841341 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D09B6E6D2DEB750100841341 /* screen4ai */;
+			target = D09B6E6D2DEB750100841341 /* korenani */;
 			targetProxy = D09B6E7D2DEB750200841341 /* PBXContainerItemProxy */;
 		};
 		D09B6E882DEB750200841341 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D09B6E6D2DEB750100841341 /* screen4ai */;
+			target = D09B6E6D2DEB750100841341 /* korenani */;
 			targetProxy = D09B6E872DEB750200841341 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -457,7 +457,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/screen4ai.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/screen4ai";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/korenani.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/korenani";
 			};
 			name = Debug;
 		};
@@ -475,7 +475,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/screen4ai.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/screen4ai";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/korenani.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/korenani";
 			};
 			name = Release;
 		};
@@ -514,7 +514,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D09B6E692DEB750100841341 /* Build configuration list for PBXProject "screen4ai" */ = {
+		D09B6E692DEB750100841341 /* Build configuration list for PBXProject "korenani" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D09B6E8E2DEB750200841341 /* Debug */,
@@ -523,7 +523,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D09B6E902DEB750200841341 /* Build configuration list for PBXNativeTarget "screen4ai" */ = {
+		D09B6E902DEB750200841341 /* Build configuration list for PBXNativeTarget "korenani" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D09B6E912DEB750200841341 /* Debug */,
@@ -532,7 +532,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D09B6E932DEB750200841341 /* Build configuration list for PBXNativeTarget "screen4aiTests" */ = {
+		D09B6E932DEB750200841341 /* Build configuration list for PBXNativeTarget "korenaniTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D09B6E942DEB750200841341 /* Debug */,
@@ -541,7 +541,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D09B6E962DEB750200841341 /* Build configuration list for PBXNativeTarget "screen4aiUITests" */ = {
+		D09B6E962DEB750200841341 /* Build configuration list for PBXNativeTarget "korenaniUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D09B6E972DEB750200841341 /* Debug */,

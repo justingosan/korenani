@@ -60,7 +60,7 @@ class SettingsWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = "Screen4AI Settings"
+        window.title = "KoreNani Settings"
         window.contentView = NSHostingView(rootView: settingsSwiftUIView)
         window.isReleasedWhenClosed = false
         

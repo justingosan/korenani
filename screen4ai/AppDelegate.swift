@@ -23,7 +23,7 @@ struct ScreenshotView: View {
 }
 
 /**
- * Main application delegate that handles the Screen4AI macOS application lifecycle.
+ * Main application delegate that handles the KoreNani macOS application lifecycle.
  *
  * This class is responsible for:
  * - Managing global hotkey registration for screenshot capture
@@ -43,7 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     /// The most recently captured screenshot image
     private var capturedImage: NSImage?
     /// Dispatch queue for handling screen capture samples
-    private let sampleQueue = DispatchQueue(label: "com.screen4ai.SampleQueue", qos: .userInitiated)
+    private let sampleQueue = DispatchQueue(label: "com.korenani.SampleQueue", qos: .userInitiated)
     /// Reference to the registered global hotkey
     private var hotKeyRef: EventHotKeyRef?
 
@@ -57,7 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * - Parameter notification: The application launch notification
      */
     func applicationDidFinishLaunching(_ notification: Notification) {
-        print("Screen4AI App finished launching.")
+        print("KoreNani App finished launching.")
         registerHotkey()
     }
 
@@ -99,13 +99,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      *
      * This method is called when the user triggers a screenshot through
      * the global hotkey or menu bar. It launches an asynchronous screen
-     * capture operation.
+     * capture operation and plays a sound if enabled in settings.
      *
      * The method is marked with `@objc` to make it compatible with
      * Objective-C runtime for hotkey event handling.
      */
     @objc func takeScreenshot() {
         print("Take Screenshot action triggered")
+        
+        // Play screenshot sound if enabled in settings
+        if SettingsManager.shared.soundEnabled {
+            SoundManager.shared.playScreenshotSound()
+        }
+        
         Task {
             await captureScreen()
         }
