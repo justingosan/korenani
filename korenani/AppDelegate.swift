@@ -3,22 +3,138 @@ import AppKit
 import ScreenCaptureKit
 import CoreVideo
 import Carbon
+import Foundation
+
+// Internal modules
+// Note: These imports are for VS Code linting - in Xcode they are not required
+// since all files are part of the same module, but we include them for clarity
+// and to avoid VS Code errors
+@_exported import struct Foundation.URL
+@_exported import class AppKit.NSImage
 
 /**
- * SwiftUI view that displays a captured screenshot image.
+ * Extension to define custom notification names
+ */
+extension NSNotification.Name {
+    static let hotkeyChanged = NSNotification.Name("hotkeyChanged")
+}
+/**
+ * SwiftUI view that displays a captured screenshot image with action buttons.
  *
  * This view presents the screenshot in a resizable container that maintains
- * the original aspect ratio while ensuring a minimum display size.
+ * the original aspect ratio while ensuring a minimum display size. It also
+ * provides buttons for common actions like saving and copying the image.
  */
 struct ScreenshotView: View {
     /// The screenshot image to display
     let image: NSImage
+    /// Alert state for showing confirmation messages
+    @State private var showingAlert = false
+    /// Alert message content
+    @State private var alertMessage = ""
 
     var body: some View {
-        Image(nsImage: image)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(minWidth: 100, minHeight: 100) // Ensure a minimum size
+        VStack(spacing: 10) {
+            Image(nsImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(minWidth: 100, minHeight: 100) // Ensure a minimum size
+            
+            HStack(spacing: 20) {
+                Button(action: saveScreenshot) {
+                    Label("Save", systemImage: "square.and.arrow.down")
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Button(action: copyScreenshot) {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+                .buttonStyle(.bordered)
+                
+                Spacer()
+                
+                Button(action: closeWindow) {
+                    Label("Close", systemImage: "xmark.circle")
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+        }
+        .padding(10)
+        .alert("Screenshot", isPresented: $showingAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
+        }
+    }
+    
+    /**
+     * Saves the screenshot to the user's preferred location.
+     */
+    private func saveScreenshot() {
+        let settings = SettingsManager.shared
+        let saveLocation = settings.saveLocation
+        
+        // Determine the directory path
+        let fileManager = FileManager.default
+        let directoryPath: String
+        
+        switch saveLocation {
+        case "Desktop":
+            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
+        case "Pictures":
+            directoryPath = NSSearchPathForDirectoriesInDomains(.picturesDirectory, .userDomainMask, true)[0]
+        case "Downloads":
+            directoryPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true)[0]
+        default:
+            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
+        }
+        
+        // Create a unique filename with timestamp
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let timestamp = dateFormatter.string(from: Date())
+        let filename = "KoreNani_Screenshot_\(timestamp).png"
+        let filePath = URL(fileURLWithPath: directoryPath).appendingPathComponent(filename)
+        
+        // Save the image as PNG
+        if let tiffData = image.tiffRepresentation,
+           let bitmapImage = NSBitmapImageRep(data: tiffData),
+           let pngData = bitmapImage.representation(using: .png, properties: [:]) {
+            do {
+                try pngData.write(to: filePath)
+                alertMessage = "Screenshot saved to \(filePath.path)"
+                showingAlert = true
+            } catch {
+                alertMessage = "Failed to save screenshot: \(error.localizedDescription)"
+                showingAlert = true
+            }
+        } else {
+            alertMessage = "Failed to process image data"
+            showingAlert = true
+        }
+    }
+    
+    /**
+     * Copies the screenshot to the clipboard.
+     */
+    private func copyScreenshot() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.writeObjects([image])
+        
+        alertMessage = "Screenshot copied to clipboard"
+        showingAlert = true
+    }
+    
+    /**
+     * Closes the screenshot window.
+     */
+    private func closeWindow() {
+        if let window = NSApp.keyWindow {
+            window.close()
+        }
     }
 }
 
@@ -52,30 +168,60 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * Called when the application finishes launching.
      *
      * This method sets up the initial application state by registering
-     * the global hotkey for screenshot capture.
+     * the global hotkey for screenshot capture and listening for hotkey changes.
      *
      * - Parameter notification: The application launch notification
      */
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("KoreNani App finished launching.")
         registerHotkey()
+        
+        // Listen for hotkey changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(hotkeyChanged),
+            name: .hotkeyChanged,
+            object: nil
+        )
+    }
+    
+    /**
+     * Called when the hotkey configuration changes.
+     * Re-registers the hotkey with the new settings.
+     */
+    @objc private func hotkeyChanged() {
+        unregisterHotkey()
+        registerHotkey()
+    }
+    
+    /**
+     * Unregisters the current global hotkey.
+     */
+    private func unregisterHotkey() {
+        if let hotKeyRef = hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+            self.hotKeyRef = nil
+            print("Unregistered previous hotkey")
+        }
     }
 
     /**
-     * Registers the global hotkey (Cmd+6) for triggering screenshot capture.
+     * Registers the global hotkey for triggering screenshot capture.
      *
      * This method uses Carbon framework APIs to register a system-wide hotkey
      * that will trigger the screenshot functionality even when the app is
      * running in the background.
      *
-     * The hotkey combination is Command + 6, which calls `takeScreenshot()`
+     * The hotkey combination is loaded from SettingsManager and calls `takeScreenshot()`
      * when pressed.
      */
     func registerHotkey() {
-        // Register Cmd+6 global hotkey
+        let settings = SettingsManager.shared
+        
+        // Register global hotkey with user-configured settings
         let hotKeyID = EventHotKeyID(signature: OSType(0x73637234), id: 1) // 'scr4'
-        let keyCode = UInt32(kVK_ANSI_6) // Key code for '6'
-        let modifiers = UInt32(cmdKey) // Command key modifier
+        let keyCode = UInt32(settings.hotkeyKeyCode)
+        let modifiers = settings.hotkeyModifiers
         
         var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed))
         
@@ -89,7 +235,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         let status = RegisterEventHotKey(keyCode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef)
         
         if status == noErr {
-            print("Successfully registered Cmd+6 hotkey")
+            print("Successfully registered hotkey: \(settings.getHotkeyDisplayString())")
         } else {
             print("Failed to register hotkey, status: \(status)")
         }
@@ -131,10 +277,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * Performs the actual screen capture operation using ScreenCaptureKit.
      *
      * This async method:
-     * 1. Obtains shareable content from the system (displays)
-     * 2. Configures a screen capture stream
-     * 3. Starts capturing and waits for a sample
-     * 4. Stops the capture and displays the result
+     * 1. Obtains shareable content from the system (windows and displays)
+     * 2. Finds the current active window
+     * 3. Configures a screen capture stream for that window
+     * 4. Starts capturing and waits for a sample
+     * 5. Stops the capture and displays the result
      *
      * The method automatically handles screen recording permissions by using
      * `SCShareableContent.current`, which triggers the system permission dialog
@@ -145,18 +292,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     func captureScreen() async {
         do {
             let content = try await SCShareableContent.current
-            guard let display = content.displays.first else {
-                print("No display found")
+            
+            // Get the current active window
+            guard let activeWindow = getCurrentActiveWindow(from: content.windows) else {
+                print("No active window found or window is not capturable")
                 return
             }
             
+            print("Capturing window: \(activeWindow.title ?? "Untitled") (App: \(activeWindow.owningApplication?.applicationName ?? "Unknown"))")
+            
             let config = SCStreamConfiguration()
-            config.width = display.width
-            config.height = display.height
+            config.width = Int(activeWindow.frame.width)
+            config.height = Int(activeWindow.frame.height)
             config.pixelFormat = kCVPixelFormatType_32BGRA
             config.showsCursor = false
             
-            let filter = SCContentFilter(display: display, excludingWindows: [])
+            let filter = SCContentFilter(desktopIndependentWindow: activeWindow)
             
             // Reset captured image
             capturedImage = nil
@@ -180,6 +331,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             
             if let image = capturedImage {
                 print("Screenshot captured successfully. Size: \(image.size)")
+                
+                // Auto-save the screenshot
+                _ = autoSaveScreenshot(image)
+                
+                // Show the screenshot window
                 Task { @MainActor in
                     self.showScreenshotWindow(image: image)
                 }
@@ -241,6 +397,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * 2. Creates a new NSWindow with the screenshot content
      * 3. Sets up window lifecycle management with notification observers
      * 4. Tracks the window for proper cleanup
+     * 5. Provides option buttons for saving or copying the screenshot
      *
      * The window is positioned centered horizontally and near the top of the screen.
      * Each screenshot gets a unique window title based on the capture timestamp.
@@ -315,5 +472,109 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         
         // Remove the notification observer
         NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: window)
+    }
+
+    /**
+     * Finds the currently active window from the available shareable windows.
+     *
+     * This method searches through the provided windows to find the one that
+     * is currently in focus (active). It excludes windows that are not on screen
+     * or are not capturable.
+     *
+     * - Parameter windows: Array of shareable windows from ScreenCaptureKit
+     * - Returns: The currently active window, or nil if none found
+     */
+    private func getCurrentActiveWindow(from windows: [SCWindow]) -> SCWindow? {
+        // Get the frontmost application
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            print("No frontmost application found")
+            return nil
+        }
+        
+        // Find windows belonging to the frontmost application
+        let frontmostWindows = windows.filter { window in
+            guard let windowApp = window.owningApplication else { return false }
+            return windowApp.processID == frontmostApp.processIdentifier &&
+                   window.isOnScreen &&
+                   window.frame.width > 0 &&
+                   window.frame.height > 0
+        }
+        
+        // Sort by window layer (higher layer = more on top) and take the first one
+        let activeWindow = frontmostWindows.max { $0.windowLayer < $1.windowLayer }
+        
+        if let window = activeWindow {
+            print("Found active window: \(window.title ?? "Untitled") (PID: \(window.owningApplication?.processID ?? 0))")
+        } else {
+            print("No capturable window found for frontmost app: \(frontmostApp.localizedName ?? "Unknown")")
+        }
+        
+        return activeWindow
+    }
+
+    /**
+     * Called when the application will terminate.
+     * Cleans up hotkey registration and observers.
+     */
+    func applicationWillTerminate(_ notification: Notification) {
+        unregisterHotkey()
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    /**
+     * Cleanup method called when the delegate is deallocated.
+     */
+    deinit {
+        unregisterHotkey()
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    /**
+     * Automatically saves the screenshot to the user's preferred location.
+     *
+     * - Parameter image: The screenshot image to save
+     * - Returns: The URL where the image was saved
+     */
+    private func autoSaveScreenshot(_ image: NSImage) -> URL? {
+        let settings = SettingsManager.shared
+        let saveLocation = settings.saveLocation
+        
+        // Determine the directory path
+        let directoryPath: String
+        
+        switch saveLocation {
+        case "Desktop":
+            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
+        case "Pictures":
+            directoryPath = NSSearchPathForDirectoriesInDomains(.picturesDirectory, .userDomainMask, true)[0]
+        case "Downloads":
+            directoryPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true)[0]
+        default:
+            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
+        }
+        
+        // Create a unique filename with timestamp
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let timestamp = dateFormatter.string(from: Date())
+        let filename = "KoreNani_\(timestamp).png"
+        let filePath = URL(fileURLWithPath: directoryPath).appendingPathComponent(filename)
+        
+        // Save the image as PNG
+        if let tiffData = image.tiffRepresentation,
+           let bitmapImage = NSBitmapImageRep(data: tiffData),
+           let pngData = bitmapImage.representation(using: .png, properties: [:]) {
+            do {
+                try pngData.write(to: filePath)
+                print("Screenshot saved to \(filePath.path)")
+                return filePath
+            } catch {
+                print("Failed to save screenshot: \(error.localizedDescription)")
+                return nil
+            }
+        } else {
+            print("Failed to process image data")
+            return nil
+        }
     }
 }

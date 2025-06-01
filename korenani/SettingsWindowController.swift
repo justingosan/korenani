@@ -45,7 +45,7 @@ class SettingsWindowController {
         
         let screenFrame = mainScreen.frame
         let windowWidth: CGFloat = 400
-        let windowHeight: CGFloat = 350
+        let windowHeight: CGFloat = 700  // Increased height to accommodate more content
         
         let windowX = (screenFrame.width - windowWidth) / 2
         let windowY = (screenFrame.height - windowHeight) / 2
@@ -56,7 +56,7 @@ class SettingsWindowController {
         
         let window = NSWindow(
             contentRect: windowRect,
-            styleMask: [.titled, .closable, .miniaturizable],
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
