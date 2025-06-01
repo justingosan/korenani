@@ -6,6 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D046E09E2DEC1F7D00286CED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E0942DEC1F7D00286CED /* AppDelegate.swift */; };
+		D046E09F2DEC1F7D00286CED /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E09C2DEC1F7D00286CED /* SoundManager.swift */; };
+		D046E0A02DEC1F7D00286CED /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E0992DEC1F7D00286CED /* SettingsManager.swift */; };
+		D046E0A12DEC1F7D00286CED /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E09A2DEC1F7D00286CED /* SettingsView.swift */; };
+		D046E0A22DEC1F7D00286CED /* KoreNaniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E0972DEC1F7D00286CED /* KoreNaniApp.swift */; };
+		D046E0A32DEC1F7D00286CED /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E09B2DEC1F7D00286CED /* SettingsWindowController.swift */; };
+		D046E0A42DEC1F7D00286CED /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D046E0962DEC1F7D00286CED /* KeychainManager.swift */; };
+		D046E0A52DEC1F7D00286CED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D046E0952DEC1F7D00286CED /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D09B6E7D2DEB750200841341 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,28 +35,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D046E0942DEC1F7D00286CED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D046E0952DEC1F7D00286CED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D046E0962DEC1F7D00286CED /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		D046E0972DEC1F7D00286CED /* KoreNaniApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreNaniApp.swift; sourceTree = "<group>"; };
+		D046E0982DEC1F7D00286CED /* screen4ai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = screen4ai.entitlements; sourceTree = "<group>"; };
+		D046E0992DEC1F7D00286CED /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		D046E09A2DEC1F7D00286CED /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D046E09B2DEC1F7D00286CED /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		D046E09C2DEC1F7D00286CED /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		D09B6E6E2DEB750100841341 /* korenani.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = korenani.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E7C2DEB750200841341 /* korenaniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E862DEB750200841341 /* korenaniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D09B6E702DEB750100841341 /* screen4ai */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = screen4ai;
-			sourceTree = "<group>";
-		};
-		D09B6E7F2DEB750200841341 /* screen4aiTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = screen4aiTests;
-			sourceTree = "<group>";
-		};
-		D09B6E892DEB750200841341 /* screen4aiUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = screen4aiUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D09B6E6B2DEB750100841341 /* Frameworks */ = {
@@ -72,12 +74,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D046E09D2DEC1F7D00286CED /* korenani */ = {
+			isa = PBXGroup;
+			children = (
+				D046E0942DEC1F7D00286CED /* AppDelegate.swift */,
+				D046E0952DEC1F7D00286CED /* Assets.xcassets */,
+				D046E0962DEC1F7D00286CED /* KeychainManager.swift */,
+				D046E0972DEC1F7D00286CED /* KoreNaniApp.swift */,
+				D046E0982DEC1F7D00286CED /* screen4ai.entitlements */,
+				D046E0992DEC1F7D00286CED /* SettingsManager.swift */,
+				D046E09A2DEC1F7D00286CED /* SettingsView.swift */,
+				D046E09B2DEC1F7D00286CED /* SettingsWindowController.swift */,
+				D046E09C2DEC1F7D00286CED /* SoundManager.swift */,
+			);
+			path = korenani;
+			sourceTree = "<group>";
+		};
 		D09B6E652DEB750100841341 = {
 			isa = PBXGroup;
 			children = (
-				D09B6E702DEB750100841341 /* screen4ai */,
-				D09B6E7F2DEB750200841341 /* screen4aiTests */,
-				D09B6E892DEB750200841341 /* screen4aiUITests */,
+				D046E09D2DEC1F7D00286CED /* korenani */,
 				D09B6E6F2DEB750100841341 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,9 +123,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				D09B6E702DEB750100841341 /* screen4ai */,
-			);
 			name = korenani;
 			packageProductDependencies = (
 			);
@@ -130,9 +143,6 @@
 			dependencies = (
 				D09B6E7E2DEB750200841341 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				D09B6E7F2DEB750200841341 /* screen4aiTests */,
-			);
 			name = korenaniTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +162,6 @@
 			);
 			dependencies = (
 				D09B6E882DEB750200841341 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D09B6E892DEB750200841341 /* screen4aiUITests */,
 			);
 			name = korenaniUITests;
 			packageProductDependencies = (
@@ -212,6 +219,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D046E0A52DEC1F7D00286CED /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +244,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D046E09E2DEC1F7D00286CED /* AppDelegate.swift in Sources */,
+				D046E09F2DEC1F7D00286CED /* SoundManager.swift in Sources */,
+				D046E0A02DEC1F7D00286CED /* SettingsManager.swift in Sources */,
+				D046E0A12DEC1F7D00286CED /* SettingsView.swift in Sources */,
+				D046E0A22DEC1F7D00286CED /* KoreNaniApp.swift in Sources */,
+				D046E0A32DEC1F7D00286CED /* SettingsWindowController.swift in Sources */,
+				D046E0A42DEC1F7D00286CED /* KeychainManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,7 +409,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = screen4ai/screen4ai.entitlements;
+				CODE_SIGN_ENTITLEMENTS = korenani/korenani.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -408,7 +423,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.thikingpandas.screen4ai;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thikingpandas.korenani;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -421,7 +436,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = screen4ai/screen4ai.entitlements;
+				CODE_SIGN_ENTITLEMENTS = korenani/korenani.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -435,7 +450,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.thikingpandas.screen4ai;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thikingpandas.korenani;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
