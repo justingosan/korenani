@@ -13,60 +13,163 @@ import Foundation
 @_exported import class AppKit.NSImage
 
 /**
- * Extension to define custom notification names
- */
-extension NSNotification.Name {
-    static let hotkeyChanged = NSNotification.Name("hotkeyChanged")
-}
-/**
- * SwiftUI view that displays a captured screenshot image with action buttons.
+ * SwiftUI view that displays a captured screenshot image with AI processing capabilities.
  *
- * This view presents the screenshot in a resizable container that maintains
- * the original aspect ratio while ensuring a minimum display size. It also
- * provides buttons for common actions like saving and copying the image.
+ * This view presents the screenshot thumbnail on the left and AI processing interface on the right.
+ * It's designed to appear at the bottom of the screen and provides buttons for common actions 
+ * like saving and copying the image, as well as AI analysis functionality.
  */
 struct ScreenshotView: View {
     /// The screenshot image to display
     let image: NSImage
+    /// Current AI processing state
+    @State private var isProcessing = false
+    /// AI response text
+    @State private var aiResponse = ""
     /// Alert state for showing confirmation messages
     @State private var showingAlert = false
     /// Alert message content
     @State private var alertMessage = ""
+    /// User prompt for AI processing
+    @State private var userPrompt = "What do you see in this screenshot?"
 
     var body: some View {
-        VStack(spacing: 10) {
-            Image(nsImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(minWidth: 100, minHeight: 100) // Ensure a minimum size
-            
-            HStack(spacing: 20) {
-                Button(action: saveScreenshot) {
-                    Label("Save", systemImage: "square.and.arrow.down")
-                }
-                .buttonStyle(.borderedProminent)
+        HStack(spacing: 15) {
+            // Left side - Screenshot thumbnail
+            VStack {
+                Image(nsImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 200, height: 150)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(8)
                 
-                Button(action: copyScreenshot) {
-                    Label("Copy", systemImage: "doc.on.doc")
+                // Action buttons for screenshot
+                HStack(spacing: 10) {
+                    Button(action: saveScreenshot) {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.system(size: 14))
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Save Screenshot")
+                    
+                    Button(action: copyScreenshot) {
+                        Image(systemName: "doc.on.doc")
+                            .font(.system(size: 14))
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Copy Screenshot")
                 }
-                .buttonStyle(.bordered)
-                
-                Spacer()
-                
-                Button(action: closeWindow) {
-                    Label("Close", systemImage: "xmark.circle")
-                }
-                .buttonStyle(.bordered)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
+            
+            // Right side - AI streaming response area
+            VStack(alignment: .leading, spacing: 10) {
+                // Header with title and close button
+                HStack {
+                    Text("AI Analysis")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Button(action: closeWindow) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Close")
+                }
+                
+                // AI response streaming area
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if isProcessing {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                Text("Analyzing screenshot...")
+                                    .foregroundColor(.secondary)
+                                    .font(.subheadline)
+                            }
+                        } else if aiResponse.isEmpty {
+                            Text("AI analysis will appear here...")
+                                .foregroundColor(.secondary)
+                                .italic()
+                                .font(.subheadline)
+                        } else {
+                            Text(aiResponse)
+                                .textSelection(.enabled)
+                                .font(.system(.body, design: .default))
+                                .lineLimit(nil)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 4)
+                }
+                .frame(height: 120)
+                .padding(12)
+                .background(Color(NSColor.controlBackgroundColor))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+            }
+            .frame(minWidth: 320)
         }
-        .padding(10)
-        .alert("Screenshot", isPresented: $showingAlert) {
+        .padding(20)
+        .background(
+            // Floating window background with subtle shadow
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(NSColor.windowBackgroundColor))
+                .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 8)
+        )
+        .onAppear {
+            // Start AI processing immediately when view appears
+            startAIAnalysis()
+        }
+        .alert("KoreNani", isPresented: $showingAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(alertMessage)
         }
+    }
+    
+    /**
+     * Starts AI analysis of the screenshot with simulated streaming.
+     * This will be replaced with actual OpenAI API integration.
+     */
+    private func startAIAnalysis() {
+        isProcessing = true
+        aiResponse = ""
+        
+        // Simulate streaming response
+        let fullResponse = "I can see this is a screenshot of what appears to be a code editor or development environment. The interface shows various panels and likely contains programming code or text. This type of screenshot is commonly captured when developers want to share their work, document a bug, or get help with their code. The layout suggests it could be an IDE like VS Code, Xcode, or similar development tools."
+        
+        let words = fullResponse.components(separatedBy: " ")
+        var currentText = ""
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            isProcessing = false
+            
+            // Simulate streaming by adding words progressively
+            for (index, word) in words.enumerated() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
+                    currentText += (index == 0 ? "" : " ") + word
+                    aiResponse = currentText
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes the screenshot with AI using OpenAI API.
+     * For now, this is a placeholder that simulates processing.
+     */
+    private func processWithAI() {
+        startAIAnalysis()
     }
     
     /**
@@ -174,6 +277,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("KoreNani App finished launching.")
+        
+        // Apply saved dock icon visibility setting
+        if SettingsManager.shared.hideDockIcon {
+            NSApplication.shared.setActivationPolicy(.accessory)
+        }
+        
         registerHotkey()
         
         // Listen for hotkey changes
@@ -390,17 +499,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     }
 
     /**
-     * Creates and displays a new window containing the captured screenshot.
+     * Creates and displays a new borderless floating window with the captured screenshot and AI processing.
      *
      * This method:
-     * 1. Calculates appropriate window dimensions based on the image aspect ratio
-     * 2. Creates a new NSWindow with the screenshot content
+     * 1. Creates a borderless window positioned at the bottom of screen
+     * 2. Uses AIProcessingView with floating appearance
      * 3. Sets up window lifecycle management with notification observers
      * 4. Tracks the window for proper cleanup
-     * 5. Provides option buttons for saving or copying the screenshot
+     * 5. Provides AI processing interface alongside screenshot actions
      *
-     * The window is positioned centered horizontally and near the top of the screen.
-     * Each screenshot gets a unique window title based on the capture timestamp.
+     * The window appears as a floating panel at the bottom of the screen.
      *
      * - Parameter image: The captured screenshot image to display
      */
@@ -410,36 +518,44 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             return
         }
         let screenFrame = mainScreen.frame
-        let windowHeight: CGFloat = 300
         
-        let aspectRatio = image.size.width / image.size.height
-        let windowWidth = windowHeight * aspectRatio
-
+        // Fixed window dimensions for floating layout
+        let windowWidth: CGFloat = 600
+        let windowHeight: CGFloat = 250
+        
+        // Position at bottom center of screen
         let windowX = (screenFrame.width - windowWidth) / 2
-        let windowY: CGFloat = 50
-
+        let windowY: CGFloat = 100 // Distance from bottom of screen
+        
         let windowRect = NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight)
         
-        let screenshotSwiftUIView = ScreenshotView(image: image)
+        let aiProcessingView = ScreenshotView(image: image)
         
+        // Create borderless window for floating appearance
         let window = NSWindow(
             contentRect: windowRect,
-            styleMask: [.titled, .closable, .resizable, .miniaturizable],
+            styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        window.title = "Screenshot \(Date().timeIntervalSince1970)"
-        window.contentView = NSHostingView(rootView: screenshotSwiftUIView)
-        window.isReleasedWhenClosed = false // Changed to false to prevent automatic deallocation
+        
+        // Configure window for floating appearance
+        window.backgroundColor = NSColor.clear
+        window.isOpaque = false
+        window.hasShadow = false // SwiftUI view will handle shadow
+        window.level = .floating
+        window.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        window.contentView = NSHostingView(rootView: aiProcessingView)
+        window.isReleasedWhenClosed = false
         
         // Create a window controller to manage the window lifecycle
         let windowController = NSWindowController(window: window)
         windowController.showWindow(nil)
         
-        // Store both window and controller to keep them alive
+        // Store window to keep it alive
         screenshotWindows.append(window)
         
-        // Set up notification observer for window closing instead of delegate
+        // Set up notification observer for window closing
         NotificationCenter.default.addObserver(
             forName: NSWindow.willCloseNotification,
             object: window,
@@ -450,6 +566,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             }
         }
 
+        // Activate the app to show the window
         NSApp.activate(ignoringOtherApps: true)
     }
     

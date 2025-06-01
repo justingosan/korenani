@@ -39,6 +39,7 @@ class SettingsManager: ObservableObject {
         static let saveLocation = "saveLocation"
         static let hotkeyKeyCode = "hotkeyKeyCode"
         static let hotkeyModifiers = "hotkeyModifiers"
+        static let hideDockIcon = "hideDockIcon"
         // Note: openAIAPIKey is now stored in Keychain, not UserDefaults
     }
     
@@ -96,6 +97,15 @@ class SettingsManager: ObservableObject {
         }
     }
     
+    /// Whether the app's dock icon should be hidden
+    @Published var hideDockIcon: Bool {
+        didSet {
+            UserDefaults.standard.set(hideDockIcon, forKey: SettingsKeys.hideDockIcon)
+            // Apply the change immediately
+            applyDockIconVisibility()
+        }
+    }
+    
     /**
      * Private initializer to ensure singleton pattern.
      *
@@ -111,6 +121,9 @@ class SettingsManager: ObservableObject {
         // Load hotkey settings or set defaults (Cmd+6)
         self.hotkeyKeyCode = UInt16(UserDefaults.standard.object(forKey: SettingsKeys.hotkeyKeyCode) as? Int ?? 22) // 22 is key code for '6'
         self.hotkeyModifiers = UInt32(UserDefaults.standard.object(forKey: SettingsKeys.hotkeyModifiers) as? Int ?? 256) // 256 is cmdKey
+        
+        // Load dock icon visibility setting or default to showing (false = show icon)
+        self.hideDockIcon = UserDefaults.standard.bool(forKey: SettingsKeys.hideDockIcon)
         
         // Load OpenAI API key from Keychain (secure storage)
         self.openAIAPIKey = KeychainManager.shared.retrieveOpenAIAPIKey() ?? ""
@@ -298,5 +311,25 @@ class SettingsManager: ObservableObject {
            let url = URL(string: urlString) {
             NSWorkspace.shared.open(url)
         }
+    }
+    
+    /**
+     * Applies the dock icon visibility setting by updating the activation policy.
+     */
+    private func applyDockIconVisibility() {
+        // Get the shared application instance
+        let app = NSApplication.shared
+        
+        // Set the activation policy based on the setting
+        if hideDockIcon {
+            // Hide the dock icon by setting the app as an accessory
+            app.setActivationPolicy(.accessory)
+        } else {
+            // Show the dock icon by setting the app as a regular application
+            app.setActivationPolicy(.regular)
+        }
+        
+        // Reactivate the app to ensure the change takes effect
+        app.activate(ignoringOtherApps: true)
     }
 }

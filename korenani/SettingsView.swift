@@ -104,6 +104,9 @@ struct SettingsView: View {
                 
                 Toggle("Play sound when taking screenshot", isOn: $settings.soundEnabled)
                 
+                Toggle("Hide dock icon", isOn: $settings.hideDockIcon)
+                    .help("When enabled, KoreNani will run in the background without a dock icon")
+                
                 HStack {
                     Text("Save screenshots to:")
                     Spacer()
