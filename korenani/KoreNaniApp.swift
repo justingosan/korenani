@@ -14,7 +14,8 @@ import AppKit
  * - Settings interface
  * - Clean application quit functionality
  */
-@main
+
+ @main
 struct KoreNaniApp: App {
     /// Connect the AppDelegate to the SwiftUI App lifecycle for handling screenshot logic
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
