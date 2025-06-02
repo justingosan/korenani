@@ -180,7 +180,6 @@ struct ScreenshotView: View {
         let saveLocation = settings.saveLocation
         
         // Determine the directory path
-        let fileManager = FileManager.default
         let directoryPath: String
         
         switch saveLocation {
@@ -529,24 +528,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         
         let windowRect = NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight)
         
-        let aiProcessingView = ScreenshotView(image: image)
-        
-        // Create borderless window for floating appearance
-        let window = NSWindow(
+        // Create draggable window for floating appearance with position persistence
+        let window = DraggableWindow(
             contentRect: windowRect,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
         
-        // Configure window for floating appearance
-        window.backgroundColor = NSColor.clear
-        window.isOpaque = false
-        window.hasShadow = false // SwiftUI view will handle shadow
-        window.level = .floating
-        window.collectionBehavior = [.canJoinAllSpaces, .stationary]
-        window.contentView = NSHostingView(rootView: aiProcessingView)
+        // Update the view with the window reference for close functionality
+        let updatedView = AIProcessingView(image: image, window: window)
+        window.contentView = NSHostingView(rootView: updatedView)
         window.isReleasedWhenClosed = false
+        
+        // Set default position if no saved position exists
+        window.setDefaultPosition()
         
         // Create a window controller to manage the window lifecycle
         let windowController = NSWindowController(window: window)

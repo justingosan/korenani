@@ -14,6 +14,8 @@ import Foundation
 struct AIProcessingView: View {
     /// The screenshot image to display
     let image: NSImage
+    /// Reference to the window for close functionality
+    weak var window: NSWindow?
     /// Current AI processing state
     @State private var isProcessing = false
     /// AI response text that streams in
@@ -23,94 +25,94 @@ struct AIProcessingView: View {
     /// Alert message content
     @State private var alertMessage = ""
     
+    /// Initialize the view with an image and optional window reference
+    init(image: NSImage, window: NSWindow?) {
+        self.image = image
+        self.window = window
+    }
+    
     var body: some View {
-        HStack(spacing: 15) {
-            // Left side - Screenshot thumbnail
-            VStack {
-                Image(nsImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 150)
-                    .background(Color.black.opacity(0.05))
-                    .cornerRadius(8)
+        VStack(spacing: 0) {
+            // Close button at the very top-right of the window
+            HStack {
+                Spacer()
                 
-                // Action buttons for screenshot
-                HStack(spacing: 10) {
-                    Button(action: saveScreenshot) {
-                        Image(systemName: "square.and.arrow.down")
-                            .font(.system(size: 14))
-                            .foregroundColor(.primary)
-                    }
-                    .buttonStyle(.borderless)
-                    .help("Save Screenshot")
-                    
-                    Button(action: copyScreenshot) {
-                        Image(systemName: "doc.on.doc")
-                            .font(.system(size: 14))
-                            .foregroundColor(.primary)
-                    }
-                    .buttonStyle(.borderless)
-                    .help("Copy Screenshot")
+                Button(action: closeWindow) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.secondary)
                 }
-                .padding(.top, 5)
+                .buttonStyle(.borderless)
+                .help("Close")
             }
+            .padding(.bottom, 12)
             
-            // Right side - AI streaming response area
-            VStack(alignment: .leading, spacing: 10) {
-                // Header with title and close button
-                HStack {
-                    Text("AI Analysis")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    Button(action: closeWindow) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 18))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(.borderless)
-                    .help("Close")
+            // Main content area with aligned image and AI response
+            HStack(alignment: .top, spacing: 15) {
+                // Left side - Screenshot thumbnail
+                VStack {
+                    Image(nsImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 200, height: 150)
+                        .background(Color.black.opacity(0.05))
+                        .cornerRadius(8)
                 }
                 
-                // AI response streaming area
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if isProcessing {
-                            HStack(spacing: 8) {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                                Text("Analyzing screenshot...")
+                // Right side - AI streaming response area
+                VStack(alignment: .leading, spacing: 0) {
+                    // AI response streaming area
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            if isProcessing {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                    Text("Analyzing screenshot...")
+                                        .foregroundColor(.secondary)
+                                        .font(.subheadline)
+                                }
+                            } else if aiResponse.isEmpty {
+                                Text("AI analysis will appear here...")
                                     .foregroundColor(.secondary)
+                                    .italic()
                                     .font(.subheadline)
+                            } else {
+                                Text(aiResponse)
+                                    .textSelection(.enabled)
+                                    .font(.system(.body, design: .default))
+                                    .lineLimit(nil)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
-                        } else if aiResponse.isEmpty {
-                            Text("AI analysis will appear here...")
-                                .foregroundColor(.secondary)
-                                .italic()
-                                .font(.subheadline)
-                        } else {
-                            Text(aiResponse)
-                                .textSelection(.enabled)
-                                .font(.system(.body, design: .default))
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 4)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 4)
+                    .frame(height: 150) // Match the image height for better alignment
+                    .padding(12)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                    
+                    // Action buttons for AI response (only copy functionality)
+                    HStack {
+                        Spacer()
+                        Button(action: copyAIResponse) {
+                            Image(systemName: "doc.on.doc")
+                                .font(.system(size: 14))
+                                .foregroundColor(.primary)
+                        }
+                        .buttonStyle(.borderless)
+                        .help("Copy AI Response")
+                        .disabled(aiResponse.isEmpty)
+                    }
+                    .padding(.top, 5)
                 }
-                .frame(height: 120)
-                .padding(12)
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                )
+                .frame(minWidth: 320)
             }
-            .frame(minWidth: 320)
         }
         .padding(20)
         .background(
@@ -215,18 +217,28 @@ struct AIProcessingView: View {
     }
     
     /**
+     * Copies the AI response text to the clipboard.
+     */
+    private func copyAIResponse() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(aiResponse, forType: .string)
+        
+        alertMessage = "AI response copied to clipboard"
+        showingAlert = true
+    }
+    
+    /**
      * Closes the AI processing window.
      */
     private func closeWindow() {
-        if let window = NSApp.keyWindow {
-            window.close()
-        }
+        window?.close()
     }
 }
 
 #Preview {
     if let image = NSImage(systemSymbolName: "photo", accessibilityDescription: "Preview") {
-        AIProcessingView(image: image)
+        AIProcessingView(image: image, window: nil)
             .frame(width: 600, height: 250)
     }
 }
