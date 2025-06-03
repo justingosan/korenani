@@ -329,7 +329,6 @@ class SettingsManager: ObservableObject {
             app.setActivationPolicy(.regular)
         }
         
-        // Reactivate the app to ensure the change takes effect
-        app.activate(ignoringOtherApps: true)
+        // Don't activate the app to keep it in the background
     }
 }

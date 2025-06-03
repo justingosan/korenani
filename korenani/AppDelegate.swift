@@ -16,7 +16,7 @@ import Foundation
  * SwiftUI view that displays a captured screenshot image with AI processing capabilities.
  *
  * This view presents the screenshot thumbnail on the left and AI processing interface on the right.
- * It's designed to appear at the bottom of the screen and provides buttons for common actions 
+ * It's designed to appear at the bottom of the screen and provides buttons for common actions
  * like saving and copying the image, as well as AI analysis functionality.
  */
 struct ScreenshotView: View {
@@ -43,7 +43,7 @@ struct ScreenshotView: View {
                     .frame(width: 200, height: 150)
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(8)
-                
+
                 // Action buttons for screenshot
                 HStack(spacing: 10) {
                     Button(action: saveScreenshot) {
@@ -52,7 +52,7 @@ struct ScreenshotView: View {
                     }
                     .buttonStyle(.borderless)
                     .help("Save Screenshot")
-                    
+
                     Button(action: copyScreenshot) {
                         Image(systemName: "doc.on.doc")
                             .font(.system(size: 14))
@@ -61,7 +61,7 @@ struct ScreenshotView: View {
                     .help("Copy Screenshot")
                 }
             }
-            
+
             // Right side - AI streaming response area
             VStack(alignment: .leading, spacing: 10) {
                 // Header with title and close button
@@ -69,9 +69,9 @@ struct ScreenshotView: View {
                     Text("AI Analysis")
                         .font(.headline)
                         .foregroundColor(.primary)
-                    
+
                     Spacer()
-                    
+
                     Button(action: closeWindow) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 18))
@@ -80,7 +80,7 @@ struct ScreenshotView: View {
                     .buttonStyle(.borderless)
                     .help("Close")
                 }
-                
+
                 // AI response streaming area
                 ScrollView {
                     VStack(alignment: .leading, spacing: 8) {
@@ -136,7 +136,7 @@ struct ScreenshotView: View {
             Text(alertMessage)
         }
     }
-    
+
     /**
      * Starts AI analysis of the screenshot with simulated streaming.
      * This will be replaced with actual OpenAI API integration.
@@ -144,16 +144,16 @@ struct ScreenshotView: View {
     private func startAIAnalysis() {
         isProcessing = true
         aiResponse = ""
-        
+
         // Simulate streaming response
         let fullResponse = "I can see this is a screenshot of what appears to be a code editor or development environment. The interface shows various panels and likely contains programming code or text. This type of screenshot is commonly captured when developers want to share their work, document a bug, or get help with their code. The layout suggests it could be an IDE like VS Code, Xcode, or similar development tools."
-        
+
         let words = fullResponse.components(separatedBy: " ")
         var currentText = ""
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isProcessing = false
-            
+
             // Simulate streaming by adding words progressively
             for (index, word) in words.enumerated() {
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
@@ -171,7 +171,7 @@ struct ScreenshotView: View {
     private func processWithAI() {
         startAIAnalysis()
     }
-    
+
     /**
      * Saves the screenshot to the user's preferred location.
      */
@@ -182,7 +182,7 @@ struct ScreenshotView: View {
         let timestamp = dateFormatter.string(from: Date())
         let filename = "KoreNani_Screenshot_\(timestamp).png"
         let filePath = URL(fileURLWithPath: tempDir).appendingPathComponent(filename)
-        
+
         if let tiffData = image.tiffRepresentation,
            let bitmapImage = NSBitmapImageRep(data: tiffData),
            let pngData = bitmapImage.representation(using: .png, properties: [:]) {
@@ -199,7 +199,7 @@ struct ScreenshotView: View {
             showingAlert = true
         }
     }
-    
+
     /**
      * Copies the screenshot to the clipboard.
      */
@@ -207,11 +207,11 @@ struct ScreenshotView: View {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.writeObjects([image])
-        
+
         alertMessage = "Screenshot copied to clipboard"
         showingAlert = true
     }
-    
+
     /**
      * Closes the screenshot window.
      */
@@ -234,8 +234,8 @@ struct ScreenshotView: View {
  * The app registers Cmd+6 as a global hotkey to trigger screenshot capture.
  */
 class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOutput {
-    /// Array of currently open screenshot windows
-    var screenshotWindows: [NSWindow] = []
+    /// The single floating screenshot window (if open)
+    var floatingWindow: NSWindow?
     /// Controller for managing the settings window
     private let settingsController = SettingsWindowController()
     /// Current screen capture stream
@@ -246,7 +246,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     private let sampleQueue = DispatchQueue(label: "com.korenani.SampleQueue", qos: .userInitiated)
     /// Reference to the registered global hotkey
     private var hotKeyRef: EventHotKeyRef?
-
+    /// Store the previously active application to restore focus after closing
+    private var previousApp: NSRunningApplication?
 
     /**
      * Called when the application finishes launching.
@@ -258,14 +259,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("KoreNani App finished launching.")
-        
+
         // Apply saved dock icon visibility setting
         if SettingsManager.shared.hideDockIcon {
             NSApplication.shared.setActivationPolicy(.accessory)
         }
-        
+
         registerHotkey()
-        
+
         // Listen for hotkey changes
         NotificationCenter.default.addObserver(
             self,
@@ -274,7 +275,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             object: nil
         )
     }
-    
+
     /**
      * Called when the hotkey configuration changes.
      * Re-registers the hotkey with the new settings.
@@ -283,7 +284,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         unregisterHotkey()
         registerHotkey()
     }
-    
+
     /**
      * Unregisters the current global hotkey.
      */
@@ -307,23 +308,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     func registerHotkey() {
         let settings = SettingsManager.shared
-        
+
         // Register global hotkey with user-configured settings
         let hotKeyID = EventHotKeyID(signature: OSType(0x73637234), id: 1) // 'scr4'
         let keyCode = UInt32(settings.hotkeyKeyCode)
         let modifiers = settings.hotkeyModifiers
-        
+
         var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed))
-        
+
         InstallEventHandler(GetApplicationEventTarget(), { (nextHandler, theEvent, userData) -> OSStatus in
             // Cast userData back to AppDelegate
             let appDelegate = Unmanaged<AppDelegate>.fromOpaque(userData!).takeUnretainedValue()
             appDelegate.takeScreenshot()
             return noErr
         }, 1, &eventType, Unmanaged.passUnretained(self).toOpaque(), nil)
-        
+
         let status = RegisterEventHotKey(keyCode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef)
-        
+
         if status == noErr {
             print("Successfully registered hotkey: \(settings.getHotkeyDisplayString())")
         } else {
@@ -331,23 +332,45 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         }
     }
     /**
-     * Initiates a screenshot capture operation.
+     * Initiates a screenshot capture operation or closes the window if app is focused.
      *
      * This method is called when the user triggers a screenshot through
-     * the global hotkey or menu bar. It launches an asynchronous screen
-     * capture operation and plays a sound if enabled in settings.
+     * the global hotkey or menu bar. It checks if the app's window is currently
+     * focused and either:
+     * - Closes the window if the app is in focus
+     * - Takes a screenshot if the app is in the background
      *
      * The method is marked with `@objc` to make it compatible with
      * Objective-C runtime for hotkey event handling.
      */
     @objc func takeScreenshot() {
         print("Take Screenshot action triggered")
+
+        // Check if our floating window is currently open
+        if let window = floatingWindow, window.isVisible {
+            // Window is open - close it and restore focus to previous app
+            print("KoreNani window is open - closing it")
+            window.close()
+            
+            // Restore focus to the previously active application
+            if let prevApp = previousApp {
+                print("Restoring focus to: \(prevApp.localizedName ?? "Unknown App")")
+                prevApp.activate()
+            }
+            return
+        }
+
+        // Store the current frontmost app before we show our window
+        previousApp = NSWorkspace.shared.frontmostApplication
+
+        // No window open - proceed with screenshot capture
+        print("Taking screenshot")
         
         // Play screenshot sound if enabled in settings
         if SettingsManager.shared.soundEnabled {
             SoundManager.shared.playScreenshotSound()
         }
-        
+
         Task {
             await captureScreen()
         }
@@ -382,32 +405,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     func captureScreen() async {
         do {
             let content = try await SCShareableContent.current
-            
+
             // Get the current active window
             guard let activeWindow = getCurrentActiveWindow(from: content.windows) else {
                 print("No active window found or window is not capturable")
                 return
             }
-            
+
             print("Capturing window: \(activeWindow.title ?? "Untitled") (App: \(activeWindow.owningApplication?.applicationName ?? "Unknown"))")
-            
+
             let config = SCStreamConfiguration()
             config.width = Int(activeWindow.frame.width)
             config.height = Int(activeWindow.frame.height)
             config.pixelFormat = kCVPixelFormatType_32BGRA
             config.showsCursor = false
-            
+
             let filter = SCContentFilter(desktopIndependentWindow: activeWindow)
-            
+
             // Reset captured image
             capturedImage = nil
-            
+
             stream = SCStream(filter: filter, configuration: config, delegate: self)
             try stream?.addStreamOutput(self, type: .screen, sampleHandlerQueue: sampleQueue)
             try await stream?.startCapture()
-            
+
             print("Stream started, waiting for sample...")
-            
+
             // Wait for a sample with timeout
             for _ in 0..<50 { // 5 second timeout
                 if capturedImage != nil {
@@ -415,16 +438,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
                 }
                 try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             }
-            
+
             try await stream?.stopCapture()
             stream = nil
-            
+
             if let image = capturedImage {
                 print("Screenshot captured successfully. Size: \(image.size)")
-                
+
                 // Auto-save the screenshot
                 _ = autoSaveScreenshot(image)
-                
+
                 // Show the screenshot window
                 Task { @MainActor in
                     self.showScreenshotWindow(image: image)
@@ -432,12 +455,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             } else {
                 print("Failed to capture screenshot - no sample received")
             }
-            
+
         } catch {
             print("Error during screenshot: \(error)")
         }
     }
-    
+
     /**
      * SCStreamOutput delegate method called when a new screen sample is available.
      *
@@ -451,21 +474,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         guard type == .screen else { return }
-        
+
         guard let cvPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             print("Could not get pixel buffer")
             return
         }
-        
+
         let ciImage = CIImage(cvPixelBuffer: cvPixelBuffer)
         let rep = NSCIImageRep(ciImage: ciImage)
         let nsImage = NSImage(size: rep.size)
         nsImage.addRepresentation(rep)
-        
+
         capturedImage = nsImage
         print("Sample received and image created")
     }
-    
+
     /**
      * SCStreamDelegate method called when the stream stops with an error.
      *
@@ -499,17 +522,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             return
         }
         let screenFrame = mainScreen.frame
-        
-        // Fixed window dimensions for floating layout
         let windowWidth: CGFloat = 600
         let windowHeight: CGFloat = 250
-        
-        // Position at bottom center of screen
         let windowX = (screenFrame.width - windowWidth) / 2
-        let windowY: CGFloat = 100 // Distance from bottom of screen
-        
+        let windowY: CGFloat = 100
         let windowRect = NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight)
-        
+        let smallImage = resizedImage(image, maxDimension: 512)
+        let newId = UUID()
+
+        if let window = floatingWindow, let hostingView = window.contentView as? NSHostingView<AIProcessingView> {
+            hostingView.rootView = AIProcessingView(image: smallImage, window: window, id: newId)
+            window.orderFront(nil)
+            return
+        }
+
         // Create draggable window for floating appearance with position persistence
         let window = DraggableWindow(
             contentRect: windowRect,
@@ -517,56 +543,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             backing: .buffered,
             defer: false
         )
-        
-        // Update the view with the window reference for close functionality
-        let updatedView = AIProcessingView(image: image, window: window)
+        let updatedView = AIProcessingView(image: smallImage, window: window, id: newId)
         window.contentView = NSHostingView(rootView: updatedView)
         window.isReleasedWhenClosed = false
-        
-        // Set default position if no saved position exists
         window.setDefaultPosition()
-        
-        // Create a window controller to manage the window lifecycle
         let windowController = NSWindowController(window: window)
         windowController.showWindow(nil)
-        
-        // Store window to keep it alive
-        screenshotWindows.append(window)
-        
-        // Set up notification observer for window closing
+        floatingWindow = window
         NotificationCenter.default.addObserver(
             forName: NSWindow.willCloseNotification,
             object: window,
             queue: .main
         ) { [weak self] notification in
-            if let closingWindow = notification.object as? NSWindow {
-                self?.handleWindowClosing(closingWindow)
-            }
+            self?.floatingWindow = nil
         }
-
-        // Activate the app to show the window
-        NSApp.activate(ignoringOtherApps: true)
-    }
-    
-    /**
-     * Handles cleanup when a screenshot window is closed.
-     *
-     * This method:
-     * 1. Removes the window from the tracking array
-     * 2. Removes the notification observer to prevent memory leaks
-     * 3. Logs the current number of remaining windows
-     *
-     * - Parameter window: The window that is being closed
-     */
-    private func handleWindowClosing(_ window: NSWindow) {
-        // Remove from our tracking array
-        if let index = screenshotWindows.firstIndex(where: { $0 === window }) {
-            screenshotWindows.remove(at: index)
-            print("Screenshot window closed. Remaining: \(screenshotWindows.count)")
-        }
-        
-        // Remove the notification observer
-        NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: window)
     }
 
     /**
@@ -585,7 +575,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             print("No frontmost application found")
             return nil
         }
-        
+
         // Find windows belonging to the frontmost application
         let frontmostWindows = windows.filter { window in
             guard let windowApp = window.owningApplication else { return false }
@@ -594,16 +584,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
                    window.frame.width > 0 &&
                    window.frame.height > 0
         }
-        
+
         // Sort by window layer (higher layer = more on top) and take the first one
         let activeWindow = frontmostWindows.max { $0.windowLayer < $1.windowLayer }
-        
+
         if let window = activeWindow {
             print("Found active window: \(window.title ?? "Untitled") (PID: \(window.owningApplication?.processID ?? 0))")
         } else {
             print("No capturable window found for frontmost app: \(frontmostApp.localizedName ?? "Unknown")")
         }
-        
+
         return activeWindow
     }
 
@@ -615,7 +605,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         unregisterHotkey()
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     /**
      * Cleanup method called when the delegate is deallocated.
      */
@@ -637,7 +627,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         let timestamp = dateFormatter.string(from: Date())
         let filename = "KoreNani_\(timestamp).png"
         let filePath = URL(fileURLWithPath: tempDir).appendingPathComponent(filename)
-        
+
         if let tiffData = image.tiffRepresentation,
            let bitmapImage = NSBitmapImageRep(data: tiffData),
            let pngData = bitmapImage.representation(using: .png, properties: [:]) {
@@ -653,5 +643,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             print("Failed to process image data")
             return nil
         }
+    }
+
+    // Add this helper function near the top-level of AppDelegate
+    func resizedImage(_ image: NSImage, maxDimension: CGFloat) -> NSImage {
+        let aspectRatio = image.size.width / image.size.height
+        var newSize: NSSize
+        if aspectRatio > 1 {
+            newSize = NSSize(width: maxDimension, height: maxDimension / aspectRatio)
+        } else {
+            newSize = NSSize(width: maxDimension * aspectRatio, height: maxDimension)
+        }
+        let newImage = NSImage(size: newSize)
+        newImage.lockFocus()
+        image.draw(in: NSRect(origin: .zero, size: newSize), from: .zero, operation: .copy, fraction: 1.0)
+        newImage.unlockFocus()
+        return newImage
     }
 }
