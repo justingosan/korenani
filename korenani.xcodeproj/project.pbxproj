@@ -18,7 +18,6 @@
 		D00F2CC82DEC9D2C001B5421 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */; };
 		D00F2CC92DEC9D2C001B5421 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */; };
 		D00F2CCA2DEC9D2C001B5421 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */; };
-		D0AB75162DEF18F500AFBF0A /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = D0AB75152DEF18F500AFBF0A /* OpenAI */; };
 		D0AB75182DEF483A00AFBF0A /* MarkdownText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */; };
 /* End PBXBuildFile section */
 
@@ -64,7 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0AB75162DEF18F500AFBF0A /* OpenAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,7 +139,6 @@
 			);
 			name = korenani;
 			packageProductDependencies = (
-				D0AB75152DEF18F500AFBF0A /* OpenAI */,
 			);
 			productName = screen4ai;
 			productReference = D09B6E6E2DEB750100841341 /* korenani.app */;
@@ -220,7 +217,6 @@
 			mainGroup = D09B6E652DEB750100841341;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				D0AB75142DEF18F500AFBF0A /* XCRemoteSwiftPackageReference "OpenAI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D09B6E6F2DEB750100841341 /* Products */;
@@ -598,25 +594,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		D0AB75142DEF18F500AFBF0A /* XCRemoteSwiftPackageReference "OpenAI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/MacPaw/OpenAI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.3;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		D0AB75152DEF18F500AFBF0A /* OpenAI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D0AB75142DEF18F500AFBF0A /* XCRemoteSwiftPackageReference "OpenAI" */;
-			productName = OpenAI;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D09B6E662DEB750100841341 /* Project object */;
 }

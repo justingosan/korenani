@@ -1,7 +1,6 @@
 import SwiftUI
 import AppKit
 import Foundation
-import OpenAI
 
 /**
  * SwiftUI view that displays a captured screenshot with AI processing capability.
@@ -100,7 +99,6 @@ struct AIProcessingView: View {
     private var aiResponseArea: some View {
         VStack(alignment: .leading, spacing: 0) {
             responseScrollView
-            copyButton
         }
         .frame(minWidth: 260)
     }
@@ -147,21 +145,6 @@ struct AIProcessingView: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
         }
-    }
-    
-    private var copyButton: some View {
-        HStack(spacing: 0) {
-            Spacer()
-            Button(action: copyAIResponse) {
-                Image(systemName: "doc.on.doc")
-                    .font(.system(size: 18))
-                    .foregroundColor(.primary)
-            }
-            .buttonStyle(.borderless)
-            .help("Copy AI Response")
-            .disabled(aiResponse.isEmpty)
-        }
-        .padding(.top, 2)
     }
     
     private var backgroundStyle: some View {
@@ -261,14 +244,6 @@ struct AIProcessingView: View {
         pasteboard.clearContents()
         pasteboard.writeObjects([image])
         alertMessage = "Screenshot copied to clipboard"
-        showingAlert = true
-    }
-
-    private func copyAIResponse() {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(aiResponse, forType: .string)
-        alertMessage = "AI response copied to clipboard"
         showingAlert = true
     }
 
