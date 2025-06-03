@@ -141,31 +141,65 @@ struct AIProcessingView: View {
         isProcessing = true
         aiResponse = ""
 
-        let openAI = OpenAI(apiToken: apiKey)
+        // Convert NSImage to PNG base64
+        guard let tiffData = image.tiffRepresentation,
+              let bitmapImage = NSBitmapImageRep(data: tiffData),
+              let pngData = bitmapImage.representation(using: .png, properties: [:]) else {
+            alertMessage = "Failed to process image data for AI analysis."
+            showingAlert = true
+            isProcessing = false
+            return
+        }
+        let base64String = pngData.base64EncodedString()
 
-        
-        let query = ChatQuery(messages: [.init(role: .user, content: prompt)!], model: .gpt4, maxTokens: 256, temperature: 0.6)
+        // Prepare the request
+        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        openAI.chats(query: query) { result in
+        // Prepare the JSON body
+        let body: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": [
+                [
+                    "role": "user",
+                    "content": [
+                        ["type": "text", "text": prompt],
+                        ["type": "image_url", "image_url": ["url": "data:image/png;base64,\(base64String)"]]
+                    ]
+                ]
+            ],
+            "max_tokens": 512
+        ]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        // Send the request
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
-                print("AI analysis in progress...")
                 isProcessing = false
-                switch result {
-                case .success(let chatResult):
-                        print("chatResult:", chatResult)
-                    let content = chatResult.choices.first?.message.content?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                    if content.isEmpty {
-                        alertMessage = "AI request succeeded but response was empty."
-                        showingAlert = true
-                    } else {
-                        aiResponse = content
-                    }
-                case .failure(let error):
-                    alertMessage = "AI request failed: \(error.localizedDescription)"
+                guard let data = data, error == nil else {
+                    alertMessage = "Network error: \(error?.localizedDescription ?? "Unknown error")"
+                    showingAlert = true
+                    return
+                }
+                // Parse the response
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let choices = json["choices"] as? [[String: Any]],
+                   let message = choices.first?["message"] as? [String: Any],
+                   let content = message["content"] as? String {
+                    aiResponse = content
+                } else if let jsonString = String(data: data, encoding: .utf8) {
+                    alertMessage = "Unexpected response: \(jsonString)"
+                    showingAlert = true
+                } else {
+                    alertMessage = "Failed to parse response"
                     showingAlert = true
                 }
             }
         }
+        task.resume()
     }
 
     private func saveScreenshot() {
