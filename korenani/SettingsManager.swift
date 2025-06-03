@@ -40,6 +40,7 @@ class SettingsManager: ObservableObject {
         static let hotkeyKeyCode = "hotkeyKeyCode"
         static let hotkeyModifiers = "hotkeyModifiers"
         static let hideDockIcon = "hideDockIcon"
+        static let aiPrompt = "aiPrompt"
         // Note: openAIAPIKey is now stored in Keychain, not UserDefaults
     }
     
@@ -106,6 +107,13 @@ class SettingsManager: ObservableObject {
         }
     }
     
+    /// The AI prompt template for analyzing screenshots
+    @Published var aiPrompt: String {
+        didSet {
+            UserDefaults.standard.set(aiPrompt, forKey: SettingsKeys.aiPrompt)
+        }
+    }
+    
     /**
      * Private initializer to ensure singleton pattern.
      *
@@ -124,6 +132,9 @@ class SettingsManager: ObservableObject {
         
         // Load dock icon visibility setting or default to showing (false = show icon)
         self.hideDockIcon = UserDefaults.standard.bool(forKey: SettingsKeys.hideDockIcon)
+        
+        // Load AI prompt or set default
+        self.aiPrompt = UserDefaults.standard.string(forKey: SettingsKeys.aiPrompt) ?? "What do you see in this screenshot? Please describe the content and any notable elements."
         
         // Load OpenAI API key from Keychain (secure storage)
         self.openAIAPIKey = KeychainManager.shared.retrieveOpenAIAPIKey() ?? ""

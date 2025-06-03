@@ -19,6 +19,7 @@
 		D00F2CC92DEC9D2C001B5421 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */; };
 		D00F2CCA2DEC9D2C001B5421 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */; };
 		D0AB75162DEF18F500AFBF0A /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = D0AB75152DEF18F500AFBF0A /* OpenAI */; };
+		D0AB75182DEF483A00AFBF0A /* MarkdownText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		D09B6E7C2DEB750200841341 /* korenaniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E862DEB750200841341 /* korenaniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0AB75132DEF172F00AFBF0A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownText.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 		D00F2CBE2DEC9D2C001B5421 /* korenani */ = {
 			isa = PBXGroup;
 			children = (
+				D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */,
 				D0AB75132DEF172F00AFBF0A /* Info.plist */,
 				D00F2CB12DEC9D2C001B5421 /* AIProcessingView.swift */,
 				D00F2CB22DEC9D2C001B5421 /* AppDelegate.swift */,
@@ -266,6 +269,7 @@
 				D00F2CC32DEC9D2C001B5421 /* KeychainManager.swift in Sources */,
 				D00F2CC42DEC9D2C001B5421 /* KoreNaniApp.swift in Sources */,
 				D00F2CC52DEC9D2C001B5421 /* AppDelegate.swift in Sources */,
+				D0AB75182DEF483A00AFBF0A /* MarkdownText.swift in Sources */,
 				D00F2CC62DEC9D2C001B5421 /* AIProcessingView.swift in Sources */,
 				D00F2CC72DEC9D2C001B5421 /* DraggableWindow.swift in Sources */,
 				D00F2CC82DEC9D2C001B5421 /* SettingsWindowController.swift in Sources */,

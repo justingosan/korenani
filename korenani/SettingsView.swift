@@ -143,6 +143,24 @@ struct SettingsView: View {
                         Spacer()
                     }
                 }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("AI Prompt Template")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    
+                    TextEditor(text: $settings.aiPrompt)
+                        .frame(height: 80)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                        .help("Customize the prompt that will be sent to AI when analyzing screenshots")
+                    
+                    Text("This prompt will be used when analyzing screenshots with AI. You can customize it to get the type of analysis you want.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             
             Divider()
@@ -214,31 +232,6 @@ struct SettingsView: View {
                 Text("Note: Hotkeys require accessibility permission to work properly")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                
-                if !checkAccessibilityPermission() {
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.orange)
-                        
-                        Text("Accessibility permission is required for hotkeys")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                        
-                        Spacer()
-                        
-                        Button("Open Settings") {
-                            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-                                NSWorkspace.shared.open(url)
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(6)
-                }
             }
             
             Spacer()

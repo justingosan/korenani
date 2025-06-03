@@ -22,9 +22,10 @@ struct KoreNaniApp: App {
 
     var body: some Scene {
         MenuBarExtra("KoreNani", systemImage: "camera.on.rectangle.fill") {
-            Button("Take Screenshot") {
-                appDelegate.takeScreenshot()
-            }
+            let shortcut = SettingsManager.shared.getHotkeyDisplayString()
+            Label("Take a Screenshot (\(shortcut))", systemImage: "camera")
+                .foregroundColor(.secondary)
+                .disabled(true)
             Divider()
             Button("Settings") {
                 appDelegate.showSettings()

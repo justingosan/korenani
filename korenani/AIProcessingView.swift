@@ -36,113 +36,142 @@ struct AIProcessingView: View {
     }
 
     var body: some View {
+        mainContent
+            .padding(10)
+            .background(backgroundStyle)
+            .alert("KoreNani", isPresented: $showingAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(alertMessage)
+            }
+            .onAppear {
+                startAIAnalysis()
+            }
+            .onChange(of: id) {
+                aiResponse = ""
+                isProcessing = true
+                startAIAnalysis()
+            }
+    }
+    
+    private var mainContent: some View {
         VStack(spacing: 0) {
-            // Close button at the very top-right of the window
-            HStack {
-                Spacer(minLength: 0)
-                Button(action: closeWindow) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.secondary)
-                }
-                .buttonStyle(.borderless)
-                .help("Close")
-            }
-            .padding(.bottom, 4)
-
-            // Main content area with aligned image and AI response
-            HStack(alignment: .top, spacing: 10) {
-                // Left side - Screenshot thumbnail
-                VStack(spacing: 0) {
-                    Image(nsImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 150, height: 250)
-                        .background(Color.black.opacity(0.02))
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.gray.opacity(0.09), lineWidth: 0.7)
-                        )
-                }
-
-                // Right side - AI streaming response area
-                VStack(alignment: .leading, spacing: 0) {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 5) {
-                            if isProcessing {
-                                HStack(spacing: 8) {
-                                    ProgressView()
-                                        .scaleEffect(0.8)
-                                    Text("Analyzing screenshot...")
-                                        .foregroundColor(.secondary)
-                                        .font(.title3)
-                                }
-                            } else if aiResponse.isEmpty {
-                                Text("AI analysis will appear here...")
-                                    .foregroundColor(.secondary)
-                                    .italic()
-                                    .font(.title3)
-                            } else {
-                                Text(aiResponse)
-                                    .textSelection(.enabled)
-                                    .font(.title3)
-                                    .lineLimit(nil)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 2)
-                    }
-                    .frame(height: 200)
-                    .padding(.vertical, 7)
-                    .padding(.horizontal, 8)
-                    .background(Color(.windowBackgroundColor).opacity(0.93))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.gray.opacity(0.12), lineWidth: 0.7)
-                    )
-
-                    HStack(spacing: 0) {
-                        Spacer()
-                        Button(action: copyAIResponse) {
-                            Image(systemName: "doc.on.doc")
-                                .font(.system(size: 18))
-                                .foregroundColor(.primary)
-                        }
-                        .buttonStyle(.borderless)
-                        .help("Copy AI Response")
-                        .disabled(aiResponse.isEmpty)
-                    }
-                    .padding(.top, 2)
-                }
-                .frame(minWidth: 260)
-            }
+            closeButton
+            contentArea
         }
-        .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(NSColor.windowBackgroundColor))
-                .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 2)
+    }
+    
+    private var closeButton: some View {
+        HStack {
+            Spacer(minLength: 0)
+            Button(action: closeWindow) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 20))
+                    .foregroundColor(.secondary)
+            }
+            .buttonStyle(.borderless)
+            .help("Close")
+        }
+        .padding(.bottom, 4)
+    }
+    
+    private var contentArea: some View {
+        HStack(alignment: .top, spacing: 10) {
+            screenshotThumbnail
+            aiResponseArea
+        }
+    }
+    
+    private var screenshotThumbnail: some View {
+        VStack(spacing: 0) {
+            Image(nsImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 150, height: 250)
+                .background(Color.black.opacity(0.02))
+                .cornerRadius(6)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.gray.opacity(0.09), lineWidth: 0.7)
+                )
+        }
+    }
+    
+    private var aiResponseArea: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            responseScrollView
+            copyButton
+        }
+        .frame(minWidth: 260)
+    }
+    
+    private var responseScrollView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 5) {
+                responseContent
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 2)
+        }
+        .frame(height: 200)
+        .padding(.vertical, 7)
+        .padding(.horizontal, 8)
+        .background(Color(.windowBackgroundColor).opacity(0.93))
+        .cornerRadius(6)
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color.gray.opacity(0.12), lineWidth: 0.7)
         )
-        .alert("KoreNani", isPresented: $showingAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(alertMessage)
+    }
+    
+    @ViewBuilder
+    private var responseContent: some View {
+        if isProcessing {
+            HStack(spacing: 8) {
+                ProgressView()
+                    .scaleEffect(0.8)
+                Text("Analyzing screenshot...")
+                    .foregroundColor(.secondary)
+                    .font(.title3)
+            }
+        } else if aiResponse.isEmpty {
+            Text("AI analysis will appear here...")
+                .foregroundColor(.secondary)
+                .italic()
+                .font(.title3)
+        } else {
+            // Use regular Text for now until MarkdownText is added to project
+            MarkdownText(markdown: aiResponse)
+                .textSelection(.enabled)
+                .font(.title3)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .onAppear {
-            startAIAnalysis()
+    }
+    
+    private var copyButton: some View {
+        HStack(spacing: 0) {
+            Spacer()
+            Button(action: copyAIResponse) {
+                Image(systemName: "doc.on.doc")
+                    .font(.system(size: 18))
+                    .foregroundColor(.primary)
+            }
+            .buttonStyle(.borderless)
+            .help("Copy AI Response")
+            .disabled(aiResponse.isEmpty)
         }
-        .onChange(of: id) {
-            aiResponse = ""
-            isProcessing = true
-            startAIAnalysis()
-        }
+        .padding(.top, 2)
+    }
+    
+    private var backgroundStyle: some View {
+        RoundedRectangle(cornerRadius: 8)
+            .fill(Color(NSColor.windowBackgroundColor))
+            .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 2)
     }
 
     private func startAIAnalysis() {
-        let prompt = "You are an excellent virtual assistant that understands what your boss wants when presenteted with an image. You answer very concisely. If it's a Japanese text, you translate it. If it's a quiz, you answer it one by one. You always give the correct answer per question if it is multiple choice. If it's instructions, you summarize it. If it's anything else, you describe it."
+        let prompt = SettingsManager.shared.aiPrompt
         let apiKey = SettingsManager.shared.openAIAPIKey
         if apiKey.isEmpty {
             alertMessage = "OpenAI API key not set in Settings."
