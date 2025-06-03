@@ -18,6 +18,7 @@
 		D00F2CC82DEC9D2C001B5421 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */; };
 		D00F2CC92DEC9D2C001B5421 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */; };
 		D00F2CCA2DEC9D2C001B5421 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */; };
+		D0AB75162DEF18F500AFBF0A /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = D0AB75152DEF18F500AFBF0A /* OpenAI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		D09B6E6E2DEB750100841341 /* korenani.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = korenani.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E7C2DEB750200841341 /* korenaniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E862DEB750200841341 /* korenaniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0AB75132DEF172F00AFBF0A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0AB75162DEF18F500AFBF0A /* OpenAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +86,7 @@
 		D00F2CBE2DEC9D2C001B5421 /* korenani */ = {
 			isa = PBXGroup;
 			children = (
+				D0AB75132DEF172F00AFBF0A /* Info.plist */,
 				D00F2CB12DEC9D2C001B5421 /* AIProcessingView.swift */,
 				D00F2CB22DEC9D2C001B5421 /* AppDelegate.swift */,
 				D00F2CB32DEC9D2C001B5421 /* Assets.xcassets */,
@@ -134,6 +138,7 @@
 			);
 			name = korenani;
 			packageProductDependencies = (
+				D0AB75152DEF18F500AFBF0A /* OpenAI */,
 			);
 			productName = screen4ai;
 			productReference = D09B6E6E2DEB750100841341 /* korenani.app */;
@@ -211,6 +216,9 @@
 			);
 			mainGroup = D09B6E652DEB750100841341;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D0AB75142DEF18F500AFBF0A /* XCRemoteSwiftPackageReference "OpenAI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D09B6E6F2DEB750100841341 /* Products */;
 			projectDirPath = "";
@@ -430,6 +438,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = korenani/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KoreNani;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -460,6 +469,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = korenani/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KoreNani;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -584,6 +594,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D0AB75142DEF18F500AFBF0A /* XCRemoteSwiftPackageReference "OpenAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MacPaw/OpenAI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D0AB75152DEF18F500AFBF0A /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0AB75142DEF18F500AFBF0A /* XCRemoteSwiftPackageReference "OpenAI" */;
+			productName = OpenAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D09B6E662DEB750100841341 /* Project object */;
 }

@@ -176,31 +176,13 @@ struct ScreenshotView: View {
      * Saves the screenshot to the user's preferred location.
      */
     private func saveScreenshot() {
-        let settings = SettingsManager.shared
-        let saveLocation = settings.saveLocation
-        
-        // Determine the directory path
-        let directoryPath: String
-        
-        switch saveLocation {
-        case "Desktop":
-            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
-        case "Pictures":
-            directoryPath = NSSearchPathForDirectoriesInDomains(.picturesDirectory, .userDomainMask, true)[0]
-        case "Downloads":
-            directoryPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true)[0]
-        default:
-            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
-        }
-        
-        // Create a unique filename with timestamp
+        let tempDir = NSTemporaryDirectory()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let timestamp = dateFormatter.string(from: Date())
         let filename = "KoreNani_Screenshot_\(timestamp).png"
-        let filePath = URL(fileURLWithPath: directoryPath).appendingPathComponent(filename)
+        let filePath = URL(fileURLWithPath: tempDir).appendingPathComponent(filename)
         
-        // Save the image as PNG
         if let tiffData = image.tiffRepresentation,
            let bitmapImage = NSBitmapImageRep(data: tiffData),
            let pngData = bitmapImage.representation(using: .png, properties: [:]) {
@@ -649,31 +631,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * - Returns: The URL where the image was saved
      */
     private func autoSaveScreenshot(_ image: NSImage) -> URL? {
-        let settings = SettingsManager.shared
-        let saveLocation = settings.saveLocation
-        
-        // Determine the directory path
-        let directoryPath: String
-        
-        switch saveLocation {
-        case "Desktop":
-            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
-        case "Pictures":
-            directoryPath = NSSearchPathForDirectoriesInDomains(.picturesDirectory, .userDomainMask, true)[0]
-        case "Downloads":
-            directoryPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true)[0]
-        default:
-            directoryPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
-        }
-        
-        // Create a unique filename with timestamp
+        let tempDir = NSTemporaryDirectory()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let timestamp = dateFormatter.string(from: Date())
         let filename = "KoreNani_\(timestamp).png"
-        let filePath = URL(fileURLWithPath: directoryPath).appendingPathComponent(filename)
+        let filePath = URL(fileURLWithPath: tempDir).appendingPathComponent(filename)
         
-        // Save the image as PNG
         if let tiffData = image.tiffRepresentation,
            let bitmapImage = NSBitmapImageRep(data: tiffData),
            let pngData = bitmapImage.representation(using: .png, properties: [:]) {

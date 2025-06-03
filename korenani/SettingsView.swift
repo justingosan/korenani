@@ -107,18 +107,6 @@ struct SettingsView: View {
                 Toggle("Hide dock icon", isOn: $settings.hideDockIcon)
                     .help("When enabled, KoreNani will run in the background without a dock icon")
                 
-                HStack {
-                    Text("Save screenshots to:")
-                    Spacer()
-                    Picker("Save Location", selection: $settings.saveLocation) {
-                        Text("Desktop").tag("Desktop")
-                        Text("Pictures").tag("Pictures")
-                        Text("Downloads").tag("Downloads")
-                        Text("Custom...").tag("Custom")
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .frame(width: 120)
-                }
             }
             
             Divider()
