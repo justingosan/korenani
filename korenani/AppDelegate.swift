@@ -527,11 +527,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         let windowX = (screenFrame.width - windowWidth) / 2
         let windowY: CGFloat = 100
         let windowRect = NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight)
-        let smallImage = resizedImage(image, maxDimension: 512)
         let newId = UUID()
 
         if let window = floatingWindow, let hostingView = window.contentView as? NSHostingView<AIProcessingView> {
-            hostingView.rootView = AIProcessingView(image: smallImage, window: window, id: newId)
+            hostingView.rootView = AIProcessingView(image: image, window: window, id: newId)
             window.orderFront(nil)
             return
         }
@@ -543,7 +542,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             backing: .buffered,
             defer: false
         )
-        let updatedView = AIProcessingView(image: smallImage, window: window, id: newId)
+        let updatedView = AIProcessingView(image: image, window: window, id: newId)
         window.contentView = NSHostingView(rootView: updatedView)
         window.isReleasedWhenClosed = false
         window.setDefaultPosition()
