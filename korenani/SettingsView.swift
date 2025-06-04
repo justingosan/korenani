@@ -189,18 +189,31 @@ struct SettingsView: View {
             Divider()
             
             VStack(alignment: .leading, spacing: 12) {
-                Text("Hotkey")
+                Text("Hotkeys")
                     .font(.headline)
                 
-                HStack {
-                    Text("Current hotkey:")
-                    Spacer()
-                    Text(settings.getHotkeyDisplayString())
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.2))
-                        .cornerRadius(4)
-                        .font(.system(.body, design: .monospaced))
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Window capture:")
+                        Spacer()
+                        Text(settings.getHotkeyDisplayString())
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2))
+                            .cornerRadius(4)
+                            .font(.system(.body, design: .monospaced))
+                    }
+                    
+                    HStack {
+                        Text("Screen selection:")
+                        Spacer()
+                        Text("⌘7")
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2))
+                            .cornerRadius(4)
+                            .font(.system(.body, design: .monospaced))
+                    }
                 }
                 
                 if isRecordingHotkey {
@@ -229,9 +242,18 @@ struct SettingsView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Text("Note: Hotkeys require accessibility permission to work properly")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("• Window capture: Captures the currently active window")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("• Screen selection: Click and drag to select any area of the screen")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("Note: Hotkeys require accessibility permission to work properly")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 4)
+                }
             }
             
             Spacer()

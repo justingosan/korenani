@@ -244,8 +244,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     private var capturedImage: NSImage?
     /// Dispatch queue for handling screen capture samples
     private let sampleQueue = DispatchQueue(label: "com.korenani.SampleQueue", qos: .userInitiated)
-    /// Reference to the registered global hotkey
+    /// Reference to the registered global hotkey for window capture
     private var hotKeyRef: EventHotKeyRef?
+    /// Reference to the registered global hotkey for screen selection
+    private var selectionHotKeyRef: EventHotKeyRef?
     /// Store the previously active application to restore focus after closing
     private var previousApp: NSRunningApplication?
 
@@ -266,6 +268,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         }
 
         registerHotkey()
+        registerSelectionHotkey()
 
         // Listen for hotkey changes
         NotificationCenter.default.addObserver(
@@ -282,7 +285,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     @objc private func hotkeyChanged() {
         unregisterHotkey()
+        unregisterSelectionHotkey()
         registerHotkey()
+        registerSelectionHotkey()
     }
 
     /**
@@ -293,6 +298,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             UnregisterEventHotKey(hotKeyRef)
             self.hotKeyRef = nil
             print("Unregistered previous hotkey")
+        }
+    }
+
+    /**
+     * Unregisters the screen selection global hotkey.
+     */
+    private func unregisterSelectionHotkey() {
+        if let selectionHotKeyRef = selectionHotKeyRef {
+            UnregisterEventHotKey(selectionHotKeyRef)
+            self.selectionHotKeyRef = nil
+            print("Unregistered previous selection hotkey")
         }
     }
 
@@ -329,6 +345,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             print("Successfully registered hotkey: \(settings.getHotkeyDisplayString())")
         } else {
             print("Failed to register hotkey, status: \(status)")
+        }
+    }
+
+    /**
+     * Registers the global hotkey for triggering screen selection capture (Cmd+7).
+     *
+     * This method uses Carbon framework APIs to register Cmd+7 as a system-wide hotkey
+     * that will trigger the screen selection functionality.
+     */
+    func registerSelectionHotkey() {
+        // Register Cmd+7 for screen selection
+        let hotKeyID = EventHotKeyID(signature: OSType(0x73637235), id: 2) // 'scr5'
+        let keyCode = UInt32(26) // Key code for '7'
+        let modifiers = UInt32(cmdKey)
+
+        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed))
+
+        InstallEventHandler(GetApplicationEventTarget(), { (nextHandler, theEvent, userData) -> OSStatus in
+            // Cast userData back to AppDelegate
+            let appDelegate = Unmanaged<AppDelegate>.fromOpaque(userData!).takeUnretainedValue()
+            appDelegate.takeSelectionScreenshot()
+            return noErr
+        }, 1, &eventType, Unmanaged.passUnretained(self).toOpaque(), nil)
+
+        let status = RegisterEventHotKey(keyCode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &selectionHotKeyRef)
+
+        if status == noErr {
+            print("Successfully registered selection hotkey: Cmd+7")
+        } else {
+            print("Failed to register selection hotkey, status: \(status)")
         }
     }
     /**
@@ -373,6 +419,42 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
 
         Task {
             await captureScreen()
+        }
+    }
+
+    /**
+     * Initiates a screen selection capture operation.
+     *
+     * This method allows users to select a specific area of the screen to capture
+     * by creating a selection overlay window.
+     */
+    @objc func takeSelectionScreenshot() {
+        print("Take Selection Screenshot action triggered")
+
+        // Check if our floating window is currently open
+        if let window = floatingWindow, window.isVisible {
+            // Window is open - close it and restore focus to previous app
+            print("KoreNani window is open - closing it")
+            window.close()
+            
+            // Restore focus to the previously active application
+            if let prevApp = previousApp {
+                print("Restoring focus to: \(prevApp.localizedName ?? "Unknown App")")
+                prevApp.activate()
+            }
+            return
+        }
+
+        // Store the current frontmost app before we show our selection
+        previousApp = NSWorkspace.shared.frontmostApplication
+
+        // Play screenshot sound if enabled in settings
+        if SettingsManager.shared.soundEnabled {
+            SoundManager.shared.playScreenshotSound()
+        }
+
+        Task {
+            await captureScreenSelection()
         }
     }
 
@@ -458,6 +540,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
 
         } catch {
             print("Error during screenshot: \(error)")
+        }
+    }
+
+    /**
+     * Performs screen selection capture using ScreenCaptureKit.
+     *
+     * This async method:
+     * 1. Creates a full-screen overlay for selection
+     * 2. Allows user to drag and select a region
+     * 3. Captures only the selected area
+     * 4. Shows the result in the screenshot window
+     */
+    func captureScreenSelection() async {
+        do {
+            let content = try await SCShareableContent.current
+            
+            guard let mainDisplay = content.displays.first else {
+                print("No display found")
+                return
+            }
+
+            print("Starting screen selection capture")
+
+            // Create and show selection overlay
+            await MainActor.run {
+                showSelectionOverlay(display: mainDisplay)
+            }
+
+        } catch {
+            print("Error during screen selection: \(error)")
         }
     }
 
@@ -600,8 +712,166 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * Called when the application will terminate.
      * Cleans up hotkey registration and observers.
      */
+    /// Reference to the selection overlay window to prevent deallocation
+    private var selectionOverlayWindow: NSWindow?
+
+    /**
+     * Shows a full-screen selection overlay for the user to select a region.
+     */
+    func showSelectionOverlay(display: SCDisplay) {
+        guard let mainScreen = NSScreen.main else {
+            print("Error: Could not get main screen.")
+            return
+        }
+        
+        let screenFrame = mainScreen.frame
+        
+        let overlayWindow = NSWindow(
+            contentRect: screenFrame,
+            styleMask: [.borderless, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        
+        overlayWindow.level = .screenSaver
+        overlayWindow.backgroundColor = NSColor.clear
+        overlayWindow.isOpaque = false
+        overlayWindow.ignoresMouseEvents = false
+        overlayWindow.acceptsMouseMovedEvents = true
+        overlayWindow.isReleasedWhenClosed = false
+        
+        // Store reference to prevent deallocation
+        selectionOverlayWindow = overlayWindow
+        
+        let selectionView = ScreenSelectionView(display: display) { [weak self] selectedRect in
+            self?.selectionOverlayWindow?.close()
+            self?.selectionOverlayWindow = nil
+            if selectedRect != .zero {
+                Task {
+                    await self?.captureSelectedRegion(display: display, rect: selectedRect)
+                }
+            } else {
+                print("Screen selection cancelled by user")
+            }
+        }
+        
+        overlayWindow.contentView = NSHostingView(rootView: selectionView)
+        overlayWindow.makeKeyAndOrderFront(nil)
+        
+        // Set up window close observer
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: overlayWindow,
+            queue: .main
+        ) { [weak self] _ in
+            self?.selectionOverlayWindow = nil
+        }
+    }
+
+    /**
+     * Captures the selected region of the screen.
+     */
+    func captureSelectedRegion(display: SCDisplay, rect: CGRect) async {
+        do {
+            // Capture the full display first
+            let config = SCStreamConfiguration()
+            config.width = Int(display.width)
+            config.height = Int(display.height)
+            config.pixelFormat = kCVPixelFormatType_32BGRA
+            config.showsCursor = false
+
+            let filter = SCContentFilter(display: display, excludingWindows: [])
+
+            // Reset captured image
+            capturedImage = nil
+
+            stream = SCStream(filter: filter, configuration: config, delegate: self)
+            try stream?.addStreamOutput(self, type: .screen, sampleHandlerQueue: sampleQueue)
+            try await stream?.startCapture()
+
+            print("Stream started for full display capture, waiting for sample...")
+
+            // Wait for a sample with timeout
+            for _ in 0..<50 { // 5 second timeout
+                if capturedImage != nil {
+                    break
+                }
+                try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+            }
+
+            try await stream?.stopCapture()
+            stream = nil
+
+            if let image = capturedImage {
+                // Crop the image to the selected region
+                let croppedImage = cropImage(image, to: rect, display: display)
+                print("Selected region captured successfully. Original: \(image.size), Cropped: \(croppedImage.size)")
+
+                // Auto-save the screenshot
+                _ = autoSaveScreenshot(croppedImage)
+
+                // Show the screenshot window
+                Task { @MainActor in
+                    self.showScreenshotWindow(image: croppedImage)
+                }
+            } else {
+                print("Failed to capture selected region - no sample received")
+            }
+
+        } catch {
+            print("Error during selected region capture: \(error)")
+        }
+    }
+
+    /**
+     * Crops an image to the specified rectangle.
+     */
+    func cropImage(_ image: NSImage, to rect: CGRect, display: SCDisplay) -> NSImage {
+        // Validate inputs
+        guard rect.width > 0 && rect.height > 0 && 
+              image.size.width > 0 && image.size.height > 0 &&
+              display.width > 0 && display.height > 0 else {
+            print("Invalid crop parameters")
+            return image
+        }
+        
+        // The rect is in screen coordinates, we need to convert to image coordinates
+        let scaleX = image.size.width / CGFloat(display.width)
+        let scaleY = image.size.height / CGFloat(display.height)
+        
+        // Convert to image coordinates (note: NSImage coordinates start from bottom-left)
+        let imageRect = CGRect(
+            x: max(0, rect.origin.x * scaleX),
+            y: max(0, (CGFloat(display.height) - rect.origin.y - rect.height) * scaleY),
+            width: min(rect.width * scaleX, image.size.width),
+            height: min(rect.height * scaleY, image.size.height)
+        )
+        
+        // Create a new image with the cropped size
+        let croppedImage = NSImage(size: CGSize(width: rect.width, height: rect.height))
+        
+        croppedImage.lockFocus()
+        defer { croppedImage.unlockFocus() }
+        
+        // Draw the source image portion to the new image
+        let sourceRect = NSRect(
+            x: imageRect.origin.x,
+            y: imageRect.origin.y,
+            width: imageRect.width,
+            height: imageRect.height
+        )
+        let destRect = NSRect(x: 0, y: 0, width: rect.width, height: rect.height)
+        
+        image.draw(in: destRect, from: sourceRect, operation: .copy, fraction: 1.0)
+        
+        return croppedImage
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         unregisterHotkey()
+        unregisterSelectionHotkey()
+        selectionOverlayWindow?.close()
+        selectionOverlayWindow = nil
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -610,6 +880,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     deinit {
         unregisterHotkey()
+        unregisterSelectionHotkey()
+        selectionOverlayWindow?.close()
+        selectionOverlayWindow = nil
         NotificationCenter.default.removeObserver(self)
     }
 

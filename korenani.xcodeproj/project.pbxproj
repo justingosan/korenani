@@ -18,6 +18,7 @@
 		D00F2CC82DEC9D2C001B5421 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */; };
 		D00F2CC92DEC9D2C001B5421 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */; };
 		D00F2CCA2DEC9D2C001B5421 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */; };
+		D038BA612DF0941E00AC8DCC /* ScreenSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D038BA602DF0941E00AC8DCC /* ScreenSelectionView.swift */; };
 		D0AB75182DEF483A00AFBF0A /* MarkdownText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		D00F2CBB2DEC9D2C001B5421 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		D038BA602DF0941E00AC8DCC /* ScreenSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSelectionView.swift; sourceTree = "<group>"; };
 		D09B6E6E2DEB750100841341 /* korenani.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = korenani.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E7C2DEB750200841341 /* korenaniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E862DEB750200841341 /* korenaniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +88,7 @@
 		D00F2CBE2DEC9D2C001B5421 /* korenani */ = {
 			isa = PBXGroup;
 			children = (
+				D038BA602DF0941E00AC8DCC /* ScreenSelectionView.swift */,
 				D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */,
 				D0AB75132DEF172F00AFBF0A /* Info.plist */,
 				D00F2CB12DEC9D2C001B5421 /* AIProcessingView.swift */,
@@ -261,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D00F2CC02DEC9D2C001B5421 /* NotificationNames.swift in Sources */,
+				D038BA612DF0941E00AC8DCC /* ScreenSelectionView.swift in Sources */,
 				D00F2CC12DEC9D2C001B5421 /* SettingsView.swift in Sources */,
 				D00F2CC32DEC9D2C001B5421 /* KeychainManager.swift in Sources */,
 				D00F2CC42DEC9D2C001B5421 /* KoreNaniApp.swift in Sources */,
