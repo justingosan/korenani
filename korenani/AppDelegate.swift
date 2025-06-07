@@ -231,8 +231,8 @@ struct ScreenshotView: View {
  * - Managing screenshot display windows
  * - Coordinating with the settings window controller
  *
- * The app registers Cmd+6 as a global hotkey to trigger screenshot capture.
- */
+ * The app registers Cmd+6 for capturing the full screen and Cmd+7 for selecting a region.
+*/
 class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOutput {
     /// The single floating screenshot window (if open)
     var floatingWindow: NSWindow?
@@ -244,7 +244,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     private var capturedImage: NSImage?
     /// Dispatch queue for handling screen capture samples
     private let sampleQueue = DispatchQueue(label: "com.korenani.SampleQueue", qos: .userInitiated)
-    /// Reference to the registered global hotkey for window capture
+    /// Reference to the registered global hotkey for full screen capture
     private var hotKeyRef: EventHotKeyRef?
     /// Reference to the registered global hotkey for screen selection
     private var selectionHotKeyRef: EventHotKeyRef?
@@ -472,9 +472,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * Performs the actual screen capture operation using ScreenCaptureKit.
      *
      * This async method:
-     * 1. Obtains shareable content from the system (windows and displays)
-     * 2. Finds the current active window
-     * 3. Configures a screen capture stream for that window
+     * 1. Obtains shareable content from the system (displays)
+     * 2. Selects the main display
+     * 3. Configures a screen capture stream for that display
      * 4. Starts capturing and waits for a sample
      * 5. Stops the capture and displays the result
      *
@@ -488,21 +488,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         do {
             let content = try await SCShareableContent.current
 
-            // Get the current active window
-            guard let activeWindow = getCurrentActiveWindow(from: content.windows) else {
-                print("No active window found or window is not capturable")
+            // Get the main display
+            guard let mainDisplay = content.displays.first else {
+                print("No display found")
                 return
             }
 
-            print("Capturing window: \(activeWindow.title ?? "Untitled") (App: \(activeWindow.owningApplication?.applicationName ?? "Unknown"))")
+            print("Capturing full screen for display: \(mainDisplay.displayID)")
 
             let config = SCStreamConfiguration()
-            config.width = Int(activeWindow.frame.width)
-            config.height = Int(activeWindow.frame.height)
+            config.width = Int(mainDisplay.width)
+            config.height = Int(mainDisplay.height)
             config.pixelFormat = kCVPixelFormatType_32BGRA
             config.showsCursor = false
 
-            let filter = SCContentFilter(desktopIndependentWindow: activeWindow)
+            let filter = SCContentFilter(display: mainDisplay, excludingWindows: [])
 
             // Reset captured image
             capturedImage = nil

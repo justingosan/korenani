@@ -194,7 +194,7 @@ struct SettingsView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Window capture:")
+                        Text("Full screen capture:")
                         Spacer()
                         Text(settings.getHotkeyDisplayString())
                             .padding(.horizontal, 8)
@@ -243,7 +243,7 @@ struct SettingsView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("• Window capture: Captures the currently active window")
+                    Text("• Full screen capture: Captures the entire display")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text("• Screen selection: Click and drag to select any area of the screen")

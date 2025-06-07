@@ -10,7 +10,7 @@ import AppKit
  *
  * Features:
  * - Menu bar presence with camera icon
- * - Screenshot capture via menu or global hotkey (Cmd+6)
+ * - Screenshot capture via menu or global hotkeys (Cmd+6 for full screen, Cmd+7 for region selection)
  * - Settings interface
  * - Clean application quit functionality
  */

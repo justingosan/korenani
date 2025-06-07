@@ -16,7 +16,8 @@ struct ScreenSelectionView: View {
     @State private var endPoint: CGPoint = .zero
     @State private var isDragging = false
     @State private var showInstructions = true
-    @State private var keyMonitor: Any?
+    @State private var globalKeyMonitor: Any?
+    @State private var localKeyMonitor: Any?
     
     var selectionRect: CGRect {
         let minX = min(startPoint.x, endPoint.x)
@@ -123,18 +124,31 @@ struct ScreenSelectionView: View {
                 }
         )
         .onAppear {
-            // Set up global key monitoring for escape key
-            keyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
+            // Monitor escape key globally in case another window is focused
+            globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
                 if event.keyCode == 53 { // Escape key
                     onSelection(.zero) // Signal cancellation
                 }
             }
+
+            // Also monitor locally while the overlay window is key
+            localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if event.keyCode == 53 {
+                    onSelection(.zero)
+                    return nil // Consume event
+                }
+                return event
+            }
         }
         .onDisappear {
-            // Clean up key monitor
-            if let monitor = keyMonitor {
+            // Clean up key monitors
+            if let monitor = globalKeyMonitor {
                 NSEvent.removeMonitor(monitor)
-                keyMonitor = nil
+                globalKeyMonitor = nil
+            }
+            if let monitor = localKeyMonitor {
+                NSEvent.removeMonitor(monitor)
+                localKeyMonitor = nil
             }
         }
     }

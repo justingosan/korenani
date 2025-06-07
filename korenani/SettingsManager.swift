@@ -126,7 +126,7 @@ class SettingsManager: ObservableObject {
         self.soundEnabled = UserDefaults.standard.object(forKey: SettingsKeys.soundEnabled) as? Bool ?? false
         self.saveLocation = UserDefaults.standard.string(forKey: SettingsKeys.saveLocation) ?? "Desktop"
         
-        // Load hotkey settings or set defaults (Cmd+6)
+        // Load hotkey settings or set defaults (Cmd+6 for full screen)
         self.hotkeyKeyCode = UInt16(UserDefaults.standard.object(forKey: SettingsKeys.hotkeyKeyCode) as? Int ?? 22) // 22 is key code for '6'
         self.hotkeyModifiers = UInt32(UserDefaults.standard.object(forKey: SettingsKeys.hotkeyModifiers) as? Int ?? 256) // 256 is cmdKey
         
