@@ -11,12 +11,16 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build project
-      run: |
-        xcodebuild -project korenani.xcodeproj \
-          -scheme korenani \
-          -configuration Release \
-          -sdk macosx \
-          CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+      - uses: actions/checkout@v3
+      - name: Select Xcode 15
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.0'
+      - name: Build project
+        run: |
+          xcodebuild -project korenani.xcodeproj \
+            -scheme korenani \
+            -configuration Release \
+            -sdk macosx \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
