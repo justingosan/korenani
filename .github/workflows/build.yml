@@ -1,0 +1,58 @@
+name: Build macOS App
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build KoreNani
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Select Xcode version
+      run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+    - name: Show Xcode version
+      run: xcodebuild -version
+
+    - name: Clean build folder
+      run: |
+        xcodebuild clean \
+          -project korenani.xcodeproj \
+          -scheme korenani
+
+    - name: Build project
+      run: |
+        xcodebuild build \
+          -project korenani.xcodeproj \
+          -scheme korenani \
+          -configuration Release \
+          -destination 'platform=macOS' \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+
+    - name: Archive project
+      run: |
+        xcodebuild archive \
+          -project korenani.xcodeproj \
+          -scheme korenani \
+          -configuration Release \
+          -destination 'platform=macOS' \
+          -archivePath build/KoreNani.xcarchive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: KoreNani-build
+        path: build/KoreNani.xcarchive
+        retention-days: 30
