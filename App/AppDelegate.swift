@@ -4,6 +4,7 @@ import ScreenCaptureKit
 import CoreVideo
 import Carbon
 import Foundation
+import CoreGraphics
 
 // Internal modules
 // Note: These imports are for VS Code linting - in Xcode they are not required
@@ -485,61 +486,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * - Note: The capture waits up to 5 seconds for a sample before timing out.
      */
     func captureScreen() async {
-        do {
-            let content = try await SCShareableContent.current
-
-            // Get the current active window
-            guard let activeWindow = getCurrentActiveWindow(from: content.windows) else {
-                print("No active window found or window is not capturable")
-                return
+        if let image = captureFrontmostWindow() {
+            print("Screenshot captured successfully. Size: \(image.size)")
+            _ = autoSaveScreenshot(image)
+            await MainActor.run {
+                self.showScreenshotWindow(image: image)
             }
-
-            print("Capturing window: \(activeWindow.title ?? "Untitled") (App: \(activeWindow.owningApplication?.applicationName ?? "Unknown"))")
-
-            let config = SCStreamConfiguration()
-            config.width = Int(activeWindow.frame.width)
-            config.height = Int(activeWindow.frame.height)
-            config.pixelFormat = kCVPixelFormatType_32BGRA
-            config.showsCursor = false
-
-            let filter = SCContentFilter(desktopIndependentWindow: activeWindow)
-
-            // Reset captured image
-            capturedImage = nil
-
-            stream = SCStream(filter: filter, configuration: config, delegate: self)
-            try stream?.addStreamOutput(self, type: .screen, sampleHandlerQueue: sampleQueue)
-            try await stream?.startCapture()
-
-            print("Stream started, waiting for sample...")
-
-            // Wait for a sample with timeout
-            for _ in 0..<50 { // 5 second timeout
-                if capturedImage != nil {
-                    break
-                }
-                try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
-            }
-
-            try await stream?.stopCapture()
-            stream = nil
-
-            if let image = capturedImage {
-                print("Screenshot captured successfully. Size: \(image.size)")
-
-                // Auto-save the screenshot
-                _ = autoSaveScreenshot(image)
-
-                // Show the screenshot window
-                Task { @MainActor in
-                    self.showScreenshotWindow(image: image)
-                }
-            } else {
-                print("Failed to capture screenshot - no sample received")
-            }
-
-        } catch {
-            print("Error during screenshot: \(error)")
+        } else {
+            print("Failed to capture screenshot")
         }
     }
 
@@ -865,6 +819,59 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         image.draw(in: destRect, from: sourceRect, operation: .copy, fraction: 1.0)
         
         return croppedImage
+    }
+
+    /**
+     * Captures the frontmost window using CoreGraphics.
+     *
+     * - Returns: The captured window image or nil on failure.
+     */
+    private func captureFrontmostWindow() -> NSImage? {
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            print("No frontmost application found")
+            return nil
+        }
+
+        let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+        guard let infoList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            print("Failed to get window list")
+            return nil
+        }
+
+        var chosenID: CGWindowID?
+        var chosenBounds = CGRect.zero
+        var highestLayer = Int.min
+
+        for info in infoList {
+            guard let pid = info[kCGWindowOwnerPID as String] as? pid_t,
+                  pid == frontmostApp.processIdentifier,
+                  let layer = info[kCGWindowLayer as String] as? Int,
+                  let boundsDict = info[kCGWindowBounds as String] as? [String: Any],
+                  let windowID = info[kCGWindowNumber as String] as? CGWindowID
+            else { continue }
+
+            if layer >= highestLayer,
+               let bounds = CGRect(dictionaryRepresentation: boundsDict as CFDictionary),
+               bounds.width > 0, bounds.height > 0 {
+                highestLayer = layer
+                chosenID = windowID
+                chosenBounds = bounds
+            }
+        }
+
+        guard let finalID = chosenID else {
+            print("No active window for PID: \(frontmostApp.processIdentifier)")
+            return nil
+        }
+
+        guard let cgImage = CGWindowListCreateImage(chosenBounds, [.optionIncludingWindow], finalID, [.boundsIgnoreFraming, .bestResolution]) else {
+            print("Failed to capture window image")
+            return nil
+        }
+
+        let size = NSSize(width: cgImage.width, height: cgImage.height)
+        let image = NSImage(cgImage: cgImage, size: size)
+        return image
     }
 
     func applicationWillTerminate(_ notification: Notification) {
