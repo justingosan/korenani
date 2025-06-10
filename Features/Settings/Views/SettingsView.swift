@@ -10,19 +10,19 @@ import Carbon
 struct PermissionRow: View {
     let permission: PermissionStatus
     @State private var isHovered = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: permission.isGranted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                     .foregroundColor(permission.isGranted ? .green : .orange)
                     .font(.system(size: 16))
-                
+
                 Text(permission.name)
                     .fontWeight(.medium)
-                
+
                 Spacer()
-                
+
                 if !permission.isGranted {
                     Button("Open System Settings") {
                         SettingsManager.shared.openSystemPreferences(for: permission)
@@ -37,12 +37,12 @@ struct PermissionRow: View {
                     .controlSize(.small)
                 }
             }
-            
+
             Text(permission.description)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.leading, 24) // Align with text after icon
-                
+
             if !permission.isGranted {
                 Text("Required for app functionality")
                     .font(.caption)
@@ -55,7 +55,7 @@ struct PermissionRow: View {
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color(
-                    permission.isGranted ? 
+                    permission.isGranted ?
                         (isHovered ? NSColor.systemGreen.withAlphaComponent(0.1) : NSColor.systemGreen.withAlphaComponent(0.05)) :
                         (isHovered ? NSColor.systemOrange.withAlphaComponent(0.1) : NSColor.systemOrange.withAlphaComponent(0.05))
                 ))
@@ -82,12 +82,12 @@ struct PermissionRow: View {
 struct SettingsView: View {
     /// Observed settings manager for reactive UI updates
     @ObservedObject private var settings = SettingsManager.shared
-    
+
     /// State for hotkey recording
     @State private var isRecordingHotkey = false
     @State private var recordedKeyCode: UInt16?
     @State private var recordedModifiers: UInt32?
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -95,35 +95,35 @@ struct SettingsView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.bottom, 10)
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("General")
                     .font(.headline)
-                
+
                 Toggle("Start KoreNani at login", isOn: $settings.autoStartEnabled)
-                
+
                 Toggle("Play sound when taking screenshot", isOn: $settings.soundEnabled)
-                
+
                 Toggle("Hide dock icon", isOn: $settings.hideDockIcon)
                     .help("When enabled, KoreNani will run in the background without a dock icon")
-                
+
             }
-            
+
             Divider()
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("OpenAI Integration")
                     .font(.headline)
-                
+
                 HStack {
                     Text("API Key:")
                     Spacer()
                 }
-                
+
                 SecureField("Enter your OpenAI API key", text: $settings.openAIAPIKey)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .help("Your OpenAI API key will be stored securely in Keychain")
-                
+
                 if !settings.openAIAPIKey.isEmpty {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
@@ -143,12 +143,12 @@ struct SettingsView: View {
                         Spacer()
                     }
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text("AI Prompt Template")
                         .font(.subheadline)
                         .fontWeight(.medium)
-                    
+
                     TextEditor(text: $settings.aiPrompt)
                         .frame(height: 80)
                         .overlay(
@@ -156,27 +156,27 @@ struct SettingsView: View {
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                         )
                         .help("Customize the prompt that will be sent to AI when analyzing screenshots")
-                    
+
                     Text("This prompt will be used when analyzing screenshots with AI. You can customize it to get the type of analysis you want.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Divider()
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("Permissions")
                     .font(.headline)
-                
+
                 Text("KoreNani requires the following permissions to function properly:")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                
+
                 ForEach(settings.checkPermissions(), id: \.name) { permission in
                     PermissionRow(permission: permission)
                 }
-                
+
                 Button("Refresh Permission Status") {
                     // This is for UI reactivity - it will trigger a refresh of the permission checks
                     settings.objectWillChange.send()
@@ -185,13 +185,13 @@ struct SettingsView: View {
                 .controlSize(.small)
                 .padding(.top, 4)
             }
-            
+
             Divider()
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("Hotkeys")
                     .font(.headline)
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Window capture:")
@@ -203,7 +203,7 @@ struct SettingsView: View {
                             .cornerRadius(4)
                             .font(.system(.body, design: .monospaced))
                     }
-                    
+
                     HStack {
                         Text("Screen selection:")
                         Spacer()
@@ -215,10 +215,10 @@ struct SettingsView: View {
                             .font(.system(.body, design: .monospaced))
                     }
                 }
-                
+
                 if isRecordingHotkey {
-                    HStack(spacing: 20) {
-                        Text("Press any key combination...")
+                    VStack(spacing: 12) {
+                        Text("Press any key combination for window capture hotkey...")
                             .foregroundColor(.orange)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding()
@@ -227,21 +227,45 @@ struct SettingsView: View {
                                     .stroke(Color.orange, lineWidth: 2)
                                     .background(Color.orange.opacity(0.1).cornerRadius(8))
                             )
-                        
-                        Button("Cancel") {
-                            stopRecording(save: false)
+
+                        HStack {
+                            Button("Cancel") {
+                                stopRecording(save: false)
+                            }
+                            .buttonStyle(.bordered)
+
+                            Spacer()
                         }
-                        .buttonStyle(.bordered)
                     }
                     .padding(.vertical, 8)
                 } else {
-                    Button("Record New Hotkey") {
-                        startRecording()
+                    VStack(spacing: 8) {
+                        HStack {
+                            Button("Customize Window Capture Hotkey") {
+                                startRecording()
+                            }
+                            .buttonStyle(.bordered)
+
+                            Button("Reset to Default (⌘6)") {
+                                settings.hotkeyKeyCode = 22 // Key code for '6'
+                                settings.hotkeyModifiers = 256 // Cmd key
+                            }
+                            .buttonStyle(.bordered)
+                        }
+
+                        HStack {
+                            Image(systemName: "info.circle")
+                                .foregroundColor(.blue)
+                                .font(.caption)
+                            Text("Screen selection hotkey (⌘7) is currently fixed")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.top, 4)
                     }
-                    .buttonStyle(.bordered)
                     .padding(.vertical, 8)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("• Window capture: Captures the currently active window")
                         .font(.caption)
@@ -255,9 +279,9 @@ struct SettingsView: View {
                         .padding(.top, 4)
                 }
             }
-            
+
             Spacer()
-            
+
             HStack {
                 Spacer()
                 Button("Close") {
@@ -351,7 +375,7 @@ struct SettingsView: View {
         // Ensure at least one non-modifier key is pressed OR a modifier is part of the combo
         // This logic might need refinement based on desired behavior for modifier-only hotkeys
         let isModifierKeyItself = [kVK_Command, kVK_Shift, kVK_Option, kVK_Control, kVK_CapsLock].contains(Int(keyCode))
-        
+
         if !isModifierKeyItself || carbonModifiers != 0 {
             recordedKeyCode = keyCode
             recordedModifiers = carbonModifiers

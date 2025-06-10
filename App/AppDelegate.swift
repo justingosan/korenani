@@ -247,8 +247,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     private let sampleQueue = DispatchQueue(label: "com.korenani.SampleQueue", qos: .userInitiated)
     /// Reference to the registered global hotkey for window capture
     private var hotKeyRef: EventHotKeyRef?
-    /// Reference to the registered global hotkey for screen selection
-    private var selectionHotKeyRef: EventHotKeyRef?
     /// Store the previously active application to restore focus after closing
     private var previousApp: NSRunningApplication?
 
@@ -269,7 +267,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         }
 
         registerHotkey()
-        registerSelectionHotkey()
 
         // Listen for hotkey changes
         NotificationCenter.default.addObserver(
@@ -286,9 +283,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     @objc private func hotkeyChanged() {
         unregisterHotkey()
-        unregisterSelectionHotkey()
         registerHotkey()
-        registerSelectionHotkey()
     }
 
     /**
@@ -299,17 +294,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             UnregisterEventHotKey(hotKeyRef)
             self.hotKeyRef = nil
             print("Unregistered previous hotkey")
-        }
-    }
-
-    /**
-     * Unregisters the screen selection global hotkey.
-     */
-    private func unregisterSelectionHotkey() {
-        if let selectionHotKeyRef = selectionHotKeyRef {
-            UnregisterEventHotKey(selectionHotKeyRef)
-            self.selectionHotKeyRef = nil
-            print("Unregistered previous selection hotkey")
         }
     }
 
@@ -348,36 +332,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             print("Failed to register hotkey, status: \(status)")
         }
     }
-
-    /**
-     * Registers the global hotkey for triggering screen selection capture (Cmd+7).
-     *
-     * This method uses Carbon framework APIs to register Cmd+7 as a system-wide hotkey
-     * that will trigger the screen selection functionality.
-     */
-    func registerSelectionHotkey() {
-        // Register Cmd+7 for screen selection
-        let hotKeyID = EventHotKeyID(signature: OSType(0x73637235), id: 2) // 'scr5'
-        let keyCode = UInt32(26) // Key code for '7'
-        let modifiers = UInt32(cmdKey)
-
-        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed))
-
-        InstallEventHandler(GetApplicationEventTarget(), { (nextHandler, theEvent, userData) -> OSStatus in
-            // Cast userData back to AppDelegate
-            let appDelegate = Unmanaged<AppDelegate>.fromOpaque(userData!).takeUnretainedValue()
-            appDelegate.takeSelectionScreenshot()
-            return noErr
-        }, 1, &eventType, Unmanaged.passUnretained(self).toOpaque(), nil)
-
-        let status = RegisterEventHotKey(keyCode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &selectionHotKeyRef)
-
-        if status == noErr {
-            print("Successfully registered selection hotkey: Cmd+7")
-        } else {
-            print("Failed to register selection hotkey, status: \(status)")
-        }
-    }
     /**
      * Initiates a screenshot capture operation or closes the window if app is focused.
      *
@@ -398,7 +352,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             // Window is open - close it and restore focus to previous app
             print("KoreNani window is open - closing it")
             window.close()
-            
+
             // Restore focus to the previously active application
             if let prevApp = previousApp {
                 print("Restoring focus to: \(prevApp.localizedName ?? "Unknown App")")
@@ -411,53 +365,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
         previousApp = NSWorkspace.shared.frontmostApplication
 
         // No window open - proceed with screenshot capture
-        print("Taking screenshot")
-        
-        // Play screenshot sound if enabled in settings
+        print("Taking screenshot")        // Play screenshot sound if enabled in settings
         if SettingsManager.shared.soundEnabled {
             SoundManager.shared.playScreenshotSound()
         }
 
         Task {
-            await captureScreen()
+            await captureCurrentWindow()
         }
     }
 
-    /**
-     * Initiates a screen selection capture operation.
-     *
-     * This method allows users to select a specific area of the screen to capture
-     * by creating a selection overlay window.
-     */
-    @objc func takeSelectionScreenshot() {
-        print("Take Selection Screenshot action triggered")
 
-        // Check if our floating window is currently open
-        if let window = floatingWindow, window.isVisible {
-            // Window is open - close it and restore focus to previous app
-            print("KoreNani window is open - closing it")
-            window.close()
-            
-            // Restore focus to the previously active application
-            if let prevApp = previousApp {
-                print("Restoring focus to: \(prevApp.localizedName ?? "Unknown App")")
-                prevApp.activate()
-            }
-            return
-        }
-
-        // Store the current frontmost app before we show our selection
-        previousApp = NSWorkspace.shared.frontmostApplication
-
-        // Play screenshot sound if enabled in settings
-        if SettingsManager.shared.soundEnabled {
-            SoundManager.shared.playScreenshotSound()
-        }
-
-        Task {
-            await captureScreenSelection()
-        }
-    }
 
     /**
      * Shows the settings window.
@@ -470,7 +388,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
     }
 
     /**
-     * Performs the actual screen capture operation using ScreenCaptureKit.
+     * Performs the current window capture operation using ScreenCaptureKit.
      *
      * This async method:
      * 1. Obtains shareable content from the system (windows and displays)
@@ -485,47 +403,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      *
      * - Note: The capture waits up to 5 seconds for a sample before timing out.
      */
-    func captureScreen() async {
+    func captureCurrentWindow() async {
         if let image = captureFrontmostWindow() {
-            print("Screenshot captured successfully. Size: \(image.size)")
+            print("Window screenshot captured successfully. Size: \(image.size)")
             _ = autoSaveScreenshot(image)
-            await MainActor.run {
+            
+            // Use Task.detached to avoid Sendable issues
+            Task.detached { @MainActor in
                 self.showScreenshotWindow(image: image)
             }
         } else {
-            print("Failed to capture screenshot")
+            print("Failed to capture window screenshot")
         }
     }
 
-    /**
-     * Performs screen selection capture using ScreenCaptureKit.
-     *
-     * This async method:
-     * 1. Creates a full-screen overlay for selection
-     * 2. Allows user to drag and select a region
-     * 3. Captures only the selected area
-     * 4. Shows the result in the screenshot window
-     */
-    func captureScreenSelection() async {
-        do {
-            let content = try await SCShareableContent.current
-            
-            guard let mainDisplay = content.displays.first else {
-                print("No display found")
-                return
-            }
 
-            print("Starting screen selection capture")
-
-            // Create and show selection overlay
-            await MainActor.run {
-                showSelectionOverlay(display: mainDisplay)
-            }
-
-        } catch {
-            print("Error during screen selection: \(error)")
-        }
-    }
 
     /**
      * SCStreamOutput delegate method called when a new screen sample is available.
@@ -608,6 +500,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
             backing: .buffered,
             defer: false
         )
+        window.level = NSWindow.Level.floating // Ensure window appears above other windows but doesn't steal focus
         let updatedView = AIProcessingView(image: image, window: window, id: newId)
         window.contentView = NSHostingView(rootView: updatedView)
         window.isReleasedWhenClosed = false
@@ -666,219 +559,97 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      * Called when the application will terminate.
      * Cleans up hotkey registration and observers.
      */
-    /// Reference to the selection overlay window to prevent deallocation
-    private var selectionOverlayWindow: NSWindow?
+
+
+
+
+
 
     /**
-     * Shows a full-screen selection overlay for the user to select a region.
-     */
-    func showSelectionOverlay(display: SCDisplay) {
-        guard let mainScreen = NSScreen.main else {
-            print("Error: Could not get main screen.")
-            return
-        }
-        
-        let screenFrame = mainScreen.frame
-        
-        let overlayWindow = NSWindow(
-            contentRect: screenFrame,
-            styleMask: [.borderless, .fullSizeContentView],
-            backing: .buffered,
-            defer: false
-        )
-        
-        overlayWindow.level = .screenSaver
-        overlayWindow.backgroundColor = NSColor.clear
-        overlayWindow.isOpaque = false
-        overlayWindow.ignoresMouseEvents = false
-        overlayWindow.acceptsMouseMovedEvents = true
-        overlayWindow.isReleasedWhenClosed = false
-        
-        // Store reference to prevent deallocation
-        selectionOverlayWindow = overlayWindow
-        
-        let selectionView = ScreenSelectionView(display: display) { [weak self] selectedRect in
-            self?.selectionOverlayWindow?.close()
-            self?.selectionOverlayWindow = nil
-            if selectedRect != .zero {
-                Task {
-                    await self?.captureSelectedRegion(display: display, rect: selectedRect)
-                }
-            } else {
-                print("Screen selection cancelled by user")
-            }
-        }
-        
-        overlayWindow.contentView = NSHostingView(rootView: selectionView)
-        overlayWindow.makeKeyAndOrderFront(nil)
-        
-        // Set up window close observer
-        NotificationCenter.default.addObserver(
-            forName: NSWindow.willCloseNotification,
-            object: overlayWindow,
-            queue: .main
-        ) { [weak self] _ in
-            self?.selectionOverlayWindow = nil
-        }
-    }
-
-    /**
-     * Captures the selected region of the screen.
-     */
-    func captureSelectedRegion(display: SCDisplay, rect: CGRect) async {
-        do {
-            // Capture the full display first
-            let config = SCStreamConfiguration()
-            config.width = Int(display.width)
-            config.height = Int(display.height)
-            config.pixelFormat = kCVPixelFormatType_32BGRA
-            config.showsCursor = false
-
-            let filter = SCContentFilter(display: display, excludingWindows: [])
-
-            // Reset captured image
-            capturedImage = nil
-
-            stream = SCStream(filter: filter, configuration: config, delegate: self)
-            try stream?.addStreamOutput(self, type: .screen, sampleHandlerQueue: sampleQueue)
-            try await stream?.startCapture()
-
-            print("Stream started for full display capture, waiting for sample...")
-
-            // Wait for a sample with timeout
-            for _ in 0..<50 { // 5 second timeout
-                if capturedImage != nil {
-                    break
-                }
-                try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
-            }
-
-            try await stream?.stopCapture()
-            stream = nil
-
-            if let image = capturedImage {
-                // Crop the image to the selected region
-                let croppedImage = cropImage(image, to: rect, display: display)
-                print("Selected region captured successfully. Original: \(image.size), Cropped: \(croppedImage.size)")
-
-                // Auto-save the screenshot
-                _ = autoSaveScreenshot(croppedImage)
-
-                // Show the screenshot window
-                Task { @MainActor in
-                    self.showScreenshotWindow(image: croppedImage)
-                }
-            } else {
-                print("Failed to capture selected region - no sample received")
-            }
-
-        } catch {
-            print("Error during selected region capture: \(error)")
-        }
-    }
-
-    /**
-     * Crops an image to the specified rectangle.
-     */
-    func cropImage(_ image: NSImage, to rect: CGRect, display: SCDisplay) -> NSImage {
-        // Validate inputs
-        guard rect.width > 0 && rect.height > 0 && 
-              image.size.width > 0 && image.size.height > 0 &&
-              display.width > 0 && display.height > 0 else {
-            print("Invalid crop parameters")
-            return image
-        }
-        
-        // The rect is in screen coordinates, we need to convert to image coordinates
-        let scaleX = image.size.width / CGFloat(display.width)
-        let scaleY = image.size.height / CGFloat(display.height)
-        
-        // Convert to image coordinates (note: NSImage coordinates start from bottom-left)
-        let imageRect = CGRect(
-            x: max(0, rect.origin.x * scaleX),
-            y: max(0, (CGFloat(display.height) - rect.origin.y - rect.height) * scaleY),
-            width: min(rect.width * scaleX, image.size.width),
-            height: min(rect.height * scaleY, image.size.height)
-        )
-        
-        // Create a new image with the cropped size
-        let croppedImage = NSImage(size: CGSize(width: rect.width, height: rect.height))
-        
-        croppedImage.lockFocus()
-        defer { croppedImage.unlockFocus() }
-        
-        // Draw the source image portion to the new image
-        let sourceRect = NSRect(
-            x: imageRect.origin.x,
-            y: imageRect.origin.y,
-            width: imageRect.width,
-            height: imageRect.height
-        )
-        let destRect = NSRect(x: 0, y: 0, width: rect.width, height: rect.height)
-        
-        image.draw(in: destRect, from: sourceRect, operation: .copy, fraction: 1.0)
-        
-        return croppedImage
-    }
-
-    /**
-     * Captures the frontmost window using CoreGraphics.
+     * Captures the frontmost window using ScreenCaptureKit.
      *
      * - Returns: The captured window image or nil on failure.
      */
     private func captureFrontmostWindow() -> NSImage? {
-        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
-            print("No frontmost application found")
-            return nil
-        }
+        let semaphore = DispatchSemaphore(value: 0)
+        var resultImage: NSImage?
 
-        let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
-        guard let infoList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
-            print("Failed to get window list")
-            return nil
-        }
+        Task {
+            do {
+                let content = try await SCShareableContent.current
 
-        var chosenID: CGWindowID?
-        var chosenBounds = CGRect.zero
-        var highestLayer = Int.min
+                guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+                    print("No frontmost application found")
+                    semaphore.signal()
+                    return
+                }
 
-        for info in infoList {
-            guard let pid = info[kCGWindowOwnerPID as String] as? pid_t,
-                  pid == frontmostApp.processIdentifier,
-                  let layer = info[kCGWindowLayer as String] as? Int,
-                  let boundsDict = info[kCGWindowBounds as String] as? [String: Any],
-                  let windowID = info[kCGWindowNumber as String] as? CGWindowID
-            else { continue }
+                // Find the frontmost window
+                let frontmostWindows = content.windows.filter { window in
+                    guard let windowApp = window.owningApplication else { return false }
+                    return windowApp.processID == frontmostApp.processIdentifier &&
+                           window.isOnScreen &&
+                           window.frame.width > 0 &&
+                           window.frame.height > 0
+                }
 
-            if layer >= highestLayer,
-               let bounds = CGRect(dictionaryRepresentation: boundsDict as CFDictionary),
-               bounds.width > 0, bounds.height > 0 {
-                highestLayer = layer
-                chosenID = windowID
-                chosenBounds = bounds
+                // Get the topmost window (highest layer)
+                guard let targetWindow = frontmostWindows.max(by: { $0.windowLayer < $1.windowLayer }) else {
+                    print("No capturable window found for frontmost app: \(frontmostApp.localizedName ?? "Unknown")")
+                    semaphore.signal()
+                    return
+                }
+
+                print("Capturing window: \(targetWindow.title ?? "Untitled") (Layer: \(targetWindow.windowLayer))")
+
+                // Configure the stream for the specific window
+                let config = SCStreamConfiguration()
+                config.width = Int(targetWindow.frame.width)
+                config.height = Int(targetWindow.frame.height)
+                config.pixelFormat = kCVPixelFormatType_32BGRA
+                config.showsCursor = false
+
+                let filter = SCContentFilter(desktopIndependentWindow: targetWindow)
+
+                // Reset captured image
+                self.capturedImage = nil
+
+                let stream = SCStream(filter: filter, configuration: config, delegate: self)
+                try stream.addStreamOutput(self, type: .screen, sampleHandlerQueue: self.sampleQueue)
+                try await stream.startCapture()
+
+                print("Stream started for window capture, waiting for sample...")
+
+                // Wait for a sample with timeout
+                for _ in 0..<50 { // 5 second timeout
+                    if self.capturedImage != nil {
+                        break
+                    }
+                    try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                }
+
+                try await stream.stopCapture()
+
+                if let image = self.capturedImage {
+                    print("Window captured successfully. Size: \(image.size)")
+                    resultImage = image
+                } else {
+                    print("Failed to capture window - no sample received")
+                }
+
+            } catch {
+                print("Error during window capture: \(error)")
             }
+
+            semaphore.signal()
         }
 
-        guard let finalID = chosenID else {
-            print("No active window for PID: \(frontmostApp.processIdentifier)")
-            return nil
-        }
-
-        guard let cgImage = CGWindowListCreateImage(chosenBounds, [.optionIncludingWindow], finalID, [.boundsIgnoreFraming, .bestResolution]) else {
-            print("Failed to capture window image")
-            return nil
-        }
-
-        let size = NSSize(width: cgImage.width, height: cgImage.height)
-        let image = NSImage(cgImage: cgImage, size: size)
-        return image
+        semaphore.wait()
+        return resultImage
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         unregisterHotkey()
-        unregisterSelectionHotkey()
-        selectionOverlayWindow?.close()
-        selectionOverlayWindow = nil
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -887,9 +658,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SCStreamDelegate, SCStreamOu
      */
     deinit {
         unregisterHotkey()
-        unregisterSelectionHotkey()
-        selectionOverlayWindow?.close()
-        selectionOverlayWindow = nil
         NotificationCenter.default.removeObserver(self)
     }
 

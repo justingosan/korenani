@@ -35,6 +35,15 @@ class DraggableWindow: NSWindow {
         loadSavedPosition()
     }
     
+    // Override to prevent window from becoming key/main
+    override var canBecomeKey: Bool {
+        return false
+    }
+    
+    override var canBecomeMain: Bool {
+        return false
+    }
+    
     override func mouseDown(with event: NSEvent) {
         // Store the mouse location in screen coordinates and window origin for dragging
         mouseDownLocationInScreen = NSEvent.mouseLocation

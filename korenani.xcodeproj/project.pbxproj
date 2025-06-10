@@ -15,7 +15,6 @@
 		D0CE60102DF8656800184101 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEC2DF8656800184101 /* SoundManager.swift */; };
 		D0CE60112DF8656800184101 /* DraggableWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE60082DF8656800184101 /* DraggableWindow.swift */; };
 		D0CE60122DF8656800184101 /* KoreNaniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FE72DF8656800184101 /* KoreNaniApp.swift */; };
-		D0CE60132DF8656800184101 /* ScreenSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FF82DF8656800184101 /* ScreenSelectionView.swift */; };
 		D0CE60142DF8656800184101 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEE2DF8656800184101 /* NotificationNames.swift */; };
 		D0CE60152DF8656800184101 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FFE2DF8656800184101 /* SettingsView.swift */; };
 		D0CE60162DF8656800184101 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEB2DF8656800184101 /* SettingsManager.swift */; };
@@ -52,7 +51,6 @@
 		D0CE5FEC2DF8656800184101 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		D0CE5FEE2DF8656800184101 /* NotificationNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
 		D0CE5FF32DF8656800184101 /* AIProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingView.swift; sourceTree = "<group>"; };
-		D0CE5FF82DF8656800184101 /* ScreenSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSelectionView.swift; sourceTree = "<group>"; };
 		D0CE5FFB2DF8656800184101 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		D0CE5FFE2DF8656800184101 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D0CE60022DF8656800184101 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -203,7 +201,6 @@
 		D0CE5FF92DF8656800184101 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D0CE5FF82DF8656800184101 /* ScreenSelectionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -447,7 +444,6 @@
 				D0CE60102DF8656800184101 /* SoundManager.swift in Sources */,
 				D0CE60112DF8656800184101 /* DraggableWindow.swift in Sources */,
 				D0CE60122DF8656800184101 /* KoreNaniApp.swift in Sources */,
-				D0CE60132DF8656800184101 /* ScreenSelectionView.swift in Sources */,
 				D0CE60142DF8656800184101 /* NotificationNames.swift in Sources */,
 				D0CE60152DF8656800184101 /* SettingsView.swift in Sources */,
 				D0CE60162DF8656800184101 /* SettingsManager.swift in Sources */,
