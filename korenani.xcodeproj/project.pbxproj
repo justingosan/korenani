@@ -7,19 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D00F2CBF2DEC9D2C001B5421 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D00F2CB32DEC9D2C001B5421 /* Assets.xcassets */; };
-		D00F2CC02DEC9D2C001B5421 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CB92DEC9D2C001B5421 /* NotificationNames.swift */; };
-		D00F2CC12DEC9D2C001B5421 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBB2DEC9D2C001B5421 /* SettingsView.swift */; };
-		D00F2CC32DEC9D2C001B5421 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CB62DEC9D2C001B5421 /* KeychainManager.swift */; };
-		D00F2CC42DEC9D2C001B5421 /* KoreNaniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CB82DEC9D2C001B5421 /* KoreNaniApp.swift */; };
-		D00F2CC52DEC9D2C001B5421 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CB22DEC9D2C001B5421 /* AppDelegate.swift */; };
-		D00F2CC62DEC9D2C001B5421 /* AIProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CB12DEC9D2C001B5421 /* AIProcessingView.swift */; };
-		D00F2CC72DEC9D2C001B5421 /* DraggableWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CB42DEC9D2C001B5421 /* DraggableWindow.swift */; };
-		D00F2CC82DEC9D2C001B5421 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */; };
-		D00F2CC92DEC9D2C001B5421 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */; };
-		D00F2CCA2DEC9D2C001B5421 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */; };
-		D038BA612DF0941E00AC8DCC /* ScreenSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D038BA602DF0941E00AC8DCC /* ScreenSelectionView.swift */; };
-		D0AB75182DEF483A00AFBF0A /* MarkdownText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */; };
+		D0CE600B2DF8656800184101 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0CE5FE62DF8656800184101 /* Info.plist */; };
+		D0CE600C2DF8656800184101 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0CE60022DF8656800184101 /* Assets.xcassets */; };
+		D0CE600D2DF8656800184101 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FFB2DF8656800184101 /* SettingsWindowController.swift */; };
+		D0CE600E2DF8656800184101 /* MarkdownText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE60062DF8656800184101 /* MarkdownText.swift */; };
+		D0CE600F2DF8656800184101 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEA2DF8656800184101 /* KeychainManager.swift */; };
+		D0CE60102DF8656800184101 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEC2DF8656800184101 /* SoundManager.swift */; };
+		D0CE60112DF8656800184101 /* DraggableWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE60082DF8656800184101 /* DraggableWindow.swift */; };
+		D0CE60122DF8656800184101 /* KoreNaniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FE72DF8656800184101 /* KoreNaniApp.swift */; };
+		D0CE60132DF8656800184101 /* ScreenSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FF82DF8656800184101 /* ScreenSelectionView.swift */; };
+		D0CE60142DF8656800184101 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEE2DF8656800184101 /* NotificationNames.swift */; };
+		D0CE60152DF8656800184101 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FFE2DF8656800184101 /* SettingsView.swift */; };
+		D0CE60162DF8656800184101 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FEB2DF8656800184101 /* SettingsManager.swift */; };
+		D0CE60172DF8656800184101 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FE52DF8656800184101 /* AppDelegate.swift */; };
+		D0CE60182DF8656800184101 /* AIProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE5FF32DF8656800184101 /* AIProcessingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,24 +41,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D00F2CB12DEC9D2C001B5421 /* AIProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingView.swift; sourceTree = "<group>"; };
-		D00F2CB22DEC9D2C001B5421 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D00F2CB32DEC9D2C001B5421 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D00F2CB42DEC9D2C001B5421 /* DraggableWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableWindow.swift; sourceTree = "<group>"; };
-		D00F2CB62DEC9D2C001B5421 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
-		D00F2CB72DEC9D2C001B5421 /* korenani.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = korenani.entitlements; sourceTree = "<group>"; };
-		D00F2CB82DEC9D2C001B5421 /* KoreNaniApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreNaniApp.swift; sourceTree = "<group>"; };
-		D00F2CB92DEC9D2C001B5421 /* NotificationNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
-		D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
-		D00F2CBB2DEC9D2C001B5421 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
-		D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
-		D038BA602DF0941E00AC8DCC /* ScreenSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSelectionView.swift; sourceTree = "<group>"; };
 		D09B6E6E2DEB750100841341 /* korenani.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = korenani.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E7C2DEB750200841341 /* korenaniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09B6E862DEB750200841341 /* korenaniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = korenaniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D0AB75132DEF172F00AFBF0A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownText.swift; sourceTree = "<group>"; };
+		D0CE5FE52DF8656800184101 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D0CE5FE62DF8656800184101 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0CE5FE72DF8656800184101 /* KoreNaniApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreNaniApp.swift; sourceTree = "<group>"; };
+		D0CE5FEA2DF8656800184101 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		D0CE5FEB2DF8656800184101 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		D0CE5FEC2DF8656800184101 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		D0CE5FEE2DF8656800184101 /* NotificationNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
+		D0CE5FF32DF8656800184101 /* AIProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingView.swift; sourceTree = "<group>"; };
+		D0CE5FF82DF8656800184101 /* ScreenSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSelectionView.swift; sourceTree = "<group>"; };
+		D0CE5FFB2DF8656800184101 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		D0CE5FFE2DF8656800184101 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D0CE60022DF8656800184101 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D0CE60032DF8656800184101 /* korenani.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = korenani.entitlements; sourceTree = "<group>"; };
+		D0CE60062DF8656800184101 /* MarkdownText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownText.swift; sourceTree = "<group>"; };
+		D0CE60082DF8656800184101 /* DraggableWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,32 +86,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D00F2CBE2DEC9D2C001B5421 /* korenani */ = {
-			isa = PBXGroup;
-			children = (
-				D038BA602DF0941E00AC8DCC /* ScreenSelectionView.swift */,
-				D0AB75172DEF483A00AFBF0A /* MarkdownText.swift */,
-				D0AB75132DEF172F00AFBF0A /* Info.plist */,
-				D00F2CB12DEC9D2C001B5421 /* AIProcessingView.swift */,
-				D00F2CB22DEC9D2C001B5421 /* AppDelegate.swift */,
-				D00F2CB32DEC9D2C001B5421 /* Assets.xcassets */,
-				D00F2CB42DEC9D2C001B5421 /* DraggableWindow.swift */,
-				D00F2CB62DEC9D2C001B5421 /* KeychainManager.swift */,
-				D00F2CB72DEC9D2C001B5421 /* korenani.entitlements */,
-				D00F2CB82DEC9D2C001B5421 /* KoreNaniApp.swift */,
-				D00F2CB92DEC9D2C001B5421 /* NotificationNames.swift */,
-				D00F2CBA2DEC9D2C001B5421 /* SettingsManager.swift */,
-				D00F2CBB2DEC9D2C001B5421 /* SettingsView.swift */,
-				D00F2CBC2DEC9D2C001B5421 /* SettingsWindowController.swift */,
-				D00F2CBD2DEC9D2C001B5421 /* SoundManager.swift */,
-			);
-			path = korenani;
-			sourceTree = "<group>";
-		};
 		D09B6E652DEB750100841341 = {
 			isa = PBXGroup;
 			children = (
-				D00F2CBE2DEC9D2C001B5421 /* korenani */,
+				D0CE5FE82DF8656800184101 /* App */,
+				D0CE5FF02DF8656800184101 /* Core */,
+				D0CE60012DF8656800184101 /* Features */,
+				D0CE60042DF8656800184101 /* Resources */,
+				D0CE60052DF8656800184101 /* Supporting Files */,
+				D0CE600A2DF8656800184101 /* UI */,
 				D09B6E6F2DEB750100841341 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -123,6 +107,199 @@
 				D09B6E862DEB750200841341 /* korenaniUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D0CE5FE82DF8656800184101 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FE52DF8656800184101 /* AppDelegate.swift */,
+				D0CE5FE62DF8656800184101 /* Info.plist */,
+				D0CE5FE72DF8656800184101 /* KoreNaniApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D0CE5FE92DF8656800184101 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D0CE5FED2DF8656800184101 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FEA2DF8656800184101 /* KeychainManager.swift */,
+				D0CE5FEB2DF8656800184101 /* SettingsManager.swift */,
+				D0CE5FEC2DF8656800184101 /* SoundManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		D0CE5FEF2DF8656800184101 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FEE2DF8656800184101 /* NotificationNames.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D0CE5FF02DF8656800184101 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FE92DF8656800184101 /* Extensions */,
+				D0CE5FED2DF8656800184101 /* Managers */,
+				D0CE5FEF2DF8656800184101 /* Models */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		D0CE5FF12DF8656800184101 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D0CE5FF22DF8656800184101 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D0CE5FF42DF8656800184101 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FF32DF8656800184101 /* AIProcessingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D0CE5FF52DF8656800184101 /* AIProcessing */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FF12DF8656800184101 /* Models */,
+				D0CE5FF22DF8656800184101 /* Services */,
+				D0CE5FF42DF8656800184101 /* Views */,
+			);
+			path = AIProcessing;
+			sourceTree = "<group>";
+		};
+		D0CE5FF62DF8656800184101 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		D0CE5FF72DF8656800184101 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D0CE5FF92DF8656800184101 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FF82DF8656800184101 /* ScreenSelectionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D0CE5FFA2DF8656800184101 /* ScreenCapture */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FF62DF8656800184101 /* Controllers */,
+				D0CE5FF72DF8656800184101 /* Models */,
+				D0CE5FF92DF8656800184101 /* Views */,
+			);
+			path = ScreenCapture;
+			sourceTree = "<group>";
+		};
+		D0CE5FFC2DF8656800184101 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FFB2DF8656800184101 /* SettingsWindowController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		D0CE5FFD2DF8656800184101 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D0CE5FFF2DF8656800184101 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FFE2DF8656800184101 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D0CE60002DF8656800184101 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FFC2DF8656800184101 /* Controllers */,
+				D0CE5FFD2DF8656800184101 /* Models */,
+				D0CE5FFF2DF8656800184101 /* Views */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		D0CE60012DF8656800184101 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE5FF52DF8656800184101 /* AIProcessing */,
+				D0CE5FFA2DF8656800184101 /* ScreenCapture */,
+				D0CE60002DF8656800184101 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		D0CE60042DF8656800184101 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE60022DF8656800184101 /* Assets.xcassets */,
+				D0CE60032DF8656800184101 /* korenani.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D0CE60052DF8656800184101 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D0CE60072DF8656800184101 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE60062DF8656800184101 /* MarkdownText.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D0CE60092DF8656800184101 /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE60082DF8656800184101 /* DraggableWindow.swift */,
+			);
+			path = Windows;
+			sourceTree = "<group>";
+		};
+		D0CE600A2DF8656800184101 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				D0CE60072DF8656800184101 /* Components */,
+				D0CE60092DF8656800184101 /* Windows */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,7 +415,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D00F2CBF2DEC9D2C001B5421 /* Assets.xcassets in Resources */,
+				D0CE600B2DF8656800184101 /* Info.plist in Resources */,
+				D0CE600C2DF8656800184101 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,18 +441,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D00F2CC02DEC9D2C001B5421 /* NotificationNames.swift in Sources */,
-				D038BA612DF0941E00AC8DCC /* ScreenSelectionView.swift in Sources */,
-				D00F2CC12DEC9D2C001B5421 /* SettingsView.swift in Sources */,
-				D00F2CC32DEC9D2C001B5421 /* KeychainManager.swift in Sources */,
-				D00F2CC42DEC9D2C001B5421 /* KoreNaniApp.swift in Sources */,
-				D00F2CC52DEC9D2C001B5421 /* AppDelegate.swift in Sources */,
-				D0AB75182DEF483A00AFBF0A /* MarkdownText.swift in Sources */,
-				D00F2CC62DEC9D2C001B5421 /* AIProcessingView.swift in Sources */,
-				D00F2CC72DEC9D2C001B5421 /* DraggableWindow.swift in Sources */,
-				D00F2CC82DEC9D2C001B5421 /* SettingsWindowController.swift in Sources */,
-				D00F2CC92DEC9D2C001B5421 /* SoundManager.swift in Sources */,
-				D00F2CCA2DEC9D2C001B5421 /* SettingsManager.swift in Sources */,
+				D0CE600D2DF8656800184101 /* SettingsWindowController.swift in Sources */,
+				D0CE600E2DF8656800184101 /* MarkdownText.swift in Sources */,
+				D0CE600F2DF8656800184101 /* KeychainManager.swift in Sources */,
+				D0CE60102DF8656800184101 /* SoundManager.swift in Sources */,
+				D0CE60112DF8656800184101 /* DraggableWindow.swift in Sources */,
+				D0CE60122DF8656800184101 /* KoreNaniApp.swift in Sources */,
+				D0CE60132DF8656800184101 /* ScreenSelectionView.swift in Sources */,
+				D0CE60142DF8656800184101 /* NotificationNames.swift in Sources */,
+				D0CE60152DF8656800184101 /* SettingsView.swift in Sources */,
+				D0CE60162DF8656800184101 /* SettingsManager.swift in Sources */,
+				D0CE60172DF8656800184101 /* AppDelegate.swift in Sources */,
+				D0CE60182DF8656800184101 /* AIProcessingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,7 +612,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = korenani/korenani.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/korenani.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -442,7 +620,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = korenani/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KoreNani;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -465,7 +643,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = korenani/korenani.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/korenani.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -473,7 +651,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = korenani/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KoreNani;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
